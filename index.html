@@ -34,14 +34,19 @@ header { background: #1c1f23; border-bottom: 1px solid var(--border); padding: 1
 .hspark { display: flex; flex-direction: column; justify-content: space-between; gap: 6px; min-width: 0; }
 .hspark[hidden] {  display: flex; visibility: hidden; }
 .pc-A { --c: #c084fc; } .pc-B1 { --c: #38bdf8; } .pc-B2 { --c: #2dd4bf; } .pc-OTHER { --c: #9ca3af; }
-.hspark .hs-title { font-size: 11px; color: rgba(255,255,255,.75); }
+.hspark .hs-title { font-size: 11px; line-height: 14px; height: 14px; color: rgba(255,255,255,.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hspark .row { display: grid; grid-template-columns: 1fr auto; column-gap: 8px; align-items: baseline; font-size: 12px; }
 .hspark .row { transition: opacity .15s; }
-.hspark .row.byyear .t { color: #fff; font-weight: 700; }
+.hspark .row.byyear .t { color: #fff; }
+svg line.ymark.lk { stroke-width: 3; stroke-opacity: 1; }
+.yrs { position: relative; }
+.yrs .ylab { position: absolute; top: -1px; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: #fff; background: #1c1f23; padding: 0 3px; white-space: nowrap; }
+.yrs:not(.lk) .ylab { color: rgba(255,255,255,.85); }
+.yrs.yy > :not(.ylab) { visibility: hidden; }
 svg line.ymark { stroke: #fff; stroke-width: 1.5; stroke-opacity: .85; vector-effect: non-scaling-stroke; pointer-events: none; }
 .hspark .row.dim { opacity: .3; }
 .hspark .row .l { color: var(--c); font-weight: 600; cursor: help; justify-self: start; }
-.hspark .row .t { color: rgba(255,255,255,.85); font-variant-numeric: tabular-nums; }
+.hspark .row .t { color: rgba(255,255,255,.85); font-variant-numeric: tabular-nums; min-width: 4.5ch; text-align: right; }
 .hspark svg { grid-column: 1 / -1; width: 100%; height: 24px; display: block; }
 .hspark path.ar { fill: var(--c); fill-opacity: .25; }
 .hspark path.ln { fill: none; stroke: var(--c); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
@@ -49,11 +54,15 @@ svg line.ymark { stroke: #fff; stroke-width: 1.5; stroke-opacity: .85; vector-ef
 .hspark rect.hit:hover { fill: #fff; fill-opacity: .12; }
 .hspark .yrs { grid-column: 1 / -1; display: flex; justify-content: space-between; font-size: 10px; color: rgba(255,255,255,.55); margin-top: -2px; }
 .hmap { position: relative; min-height: 220px; }
-.hmap svg { width: 100%; height: calc(100% - 38px); margin-top: 38px; display: block; }
-.hmap .mlink { position: absolute; left: 0; top: 19px; font-size: 12px; font-weight: 600; color: #9fe3cf; text-decoration: none; z-index: 1; }
+.hmap svg { width: 100%; height: calc(100% - 64px); margin-top: 64px; display: block; }
+.hmap .mtitle { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 6px; font-size: 18px; font-weight: 700; line-height: 1.2; z-index: 1; }
+.hmap .mtitle button { font: inherit; font-size: 12px; font-weight: 600; line-height: 1; padding: 3px 8px; border: 1px solid rgba(255,255,255,.6); border-radius: 999px; background: rgba(255,255,255,.18); color: #fff; cursor: pointer; }
+.hmap .mtitle button:hover { background: rgba(255,255,255,.35); }
+.hmap .mlink { position: absolute; left: 0; top: 26px; font-size: 12px; font-weight: 600; color: #9fe3cf; text-decoration: none; z-index: 1; }
 .hmap .mlink:hover { text-decoration: underline; }
-.hmap .mh { position: absolute; left: 0; right: 0; top: 0; height: 18px; display: flex; align-items: center; gap: 8px; font-size: 11px; color: rgba(255,255,255,.75); z-index: 1; }
-.hmap .mh .mt.on { color: #fff; font-weight: 700; font-size: 12px; }
+.hmap .mh { position: absolute; left: 0; right: 0; top: 44px; height: 18px; display: flex; align-items: center; gap: 8px; font-size: 11px; color: rgba(255,255,255,.75); z-index: 1; }
+.hmap .mh .mt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.hmap .mh .mt.on { color: #fff; }
 .hmap .pie { transition: opacity .15s; }
 .hmap svg.focus .pie:not(.hovered) { opacity: .25; }
 .hmap .out { fill: rgba(255,255,255,.08); stroke: rgba(255,255,255,.35); stroke-width: .8; }
@@ -71,20 +80,22 @@ header h1 a { color: #fff; }
 header h1 .flag { height: 20px; width: auto; vertical-align: middle; margin-right: 10px; border: 1px solid rgba(255,255,255,.35); box-shadow: 0 1px 3px rgba(0,0,0,.5); }
 header h1 a.home { text-decoration: none; }
 header h1 a.home:hover { text-decoration: underline; }
-.lockbar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 12px; color: #fff; }
-.lockbar[hidden] { display: none; }
-.lockchip { font: inherit; font-size: 12px; font-weight: 600; padding: 2px 8px; border: 1px solid rgba(255,255,255,.6); border-radius: 999px; background: rgba(255,255,255,.18); color: #fff; cursor: pointer; }
-.lockchip:hover { background: rgba(255,255,255,.35); }
+.hspark .row { padding: 3px 6px; margin: -3px -6px; border: 1px solid transparent; border-radius: 6px; }
+.hspark .row.locked { border-color: #fff; background: rgba(255,255,255,.1); }
 .hspark .row.locked .l { text-decoration: underline; text-underline-offset: 3px; }
-.datanav { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; color: #fff; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,.3); }
-.dn-ctx { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
-.dn-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: rgba(255,255,255,.75); }
+.datanav { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 18px; color: #fff; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.3); }
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.crumbs .sep { color: rgba(255,255,255,.6); font-size: 16px; line-height: 1; user-select: none; }
+.crumbs .cb { font: inherit; font-size: 13px; font-weight: 600; line-height: 1.2; height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.55); background: rgba(255,255,255,.14); color: #fff; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.crumbs .cb:hover { background: rgba(255,255,255,.3); border-color: #fff; }
+.crumbs .cb.on { background: rgba(255,255,255,.92); border-color: #fff; color: #1c1f23; }
+.crumbs .cb.on:hover { background: #fff; }
+.crumbs .cb b { font-weight: 600; opacity: .7; }
+.crumbs select.cb { appearance: none; -webkit-appearance: none; text-align: center; }
+.crumbs select.cb.add { border-style: dashed; }
+.crumbs select option, .crumbs select optgroup { color: #1c1f23; background: #fff; }
 .dn-text { font-size: 13px; color: rgba(255,255,255,.9); }
 .dn-none { font-size: 12px; color: rgba(255,255,255,.65); }
-.datanav select { font: inherit; font-size: 15px; font-weight: 700; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,.5); background: #fff; color: #1c1f23; cursor: pointer; }
-.dnbtn { font: inherit; font-size: 12px; font-weight: 700; padding: 3px 9px; border: 1px solid rgba(255,255,255,.6); border-radius: 999px; background: rgba(255,255,255,.18); color: #fff; cursor: pointer; }
-.dnbtn:hover { background: rgba(255,255,255,.35); }
-.dnbtn[hidden] { display: none; }
 .hexplore { display: flex; flex-direction: column; gap: 6px; min-width: 0; color: #fff; }
 .hexplore[hidden] { display: none; }
 .hexplore select { font: inherit; font-size: 12px; font-weight: 600; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,.5); background: #fff; color: #1c1f23; cursor: pointer; }
@@ -95,9 +106,10 @@ header h1 a.home:hover { text-decoration: underline; }
 .exitem .exl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .exitem .exn { font-variant-numeric: tabular-nums; opacity: .85; flex: none; }
 .exitem:hover { border-color: #fff; }
-.exitem.on { background: rgba(255,255,255,.9); color: #1c1f23; font-weight: 700; border-color: #fff; }
+.exitem.on { background: rgba(255,255,255,.9); color: #1c1f23; border-color: #fff; }
 .exitem.on i { background: rgba(0,0,0,.12); }
-.exitem.on .exl::after { content: ' ✕'; }
+.exitem .exl::after { content: ' ✕'; visibility: hidden; }
+.exitem.on .exl::after { visibility: visible; }
 .verbtn { font-weight: 600; }
 .verbtn::after { content: ' ▾'; }
 .verbtn[aria-expanded=true]::after { content: ' ▴'; }
@@ -112,6 +124,8 @@ header h1 a.home:hover { text-decoration: underline; }
 #viewer.previewing #pager::before { content: 'Previewing filter · '; color: var(--accent); font-weight: 600; }
 .exnone { font-size: 12px; color: rgba(255,255,255,.7); }
 header.stateview { --hcols: 260px minmax(220px, 340px) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(230px, 300px); }
+.scard .trk { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: 13px; }
+.scard .trk .hfilter { font-size: 12px; padding: 2px 8px; color: inherit; background: transparent; border-color: currentColor; }
 .hfilter { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #fff; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.25); border-radius: 8px; padding: 4px 10px; cursor: pointer; text-shadow: none; }
 .health { align-self: flex-start; text-align: left; font-size: 12px; line-height: 1.5; color: rgba(255,255,255,.88); background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.25); border-radius: 8px; padding: 6px 10px; text-shadow: none; }
 .allcard { width: 100%; align-self: start; color: var(--text); text-shadow: none; }
@@ -129,7 +143,7 @@ header.stateview { --hcols: 260px minmax(220px, 340px) minmax(0, 1fr) minmax(0, 
 .health.outdated .dot { background: #fbbf24; }
 .health.failed .dot { background: #f87171; }
 header h1 small { display: block; font-weight: 400; color: rgba(255,255,255,.88); font-size: 13px; margin-top: 4px; max-width: 900px; }
-main { padding: 16px; max-width: 1600px; margin: 0 auto; }
+main { padding: 8px 16px 16px; max-width: 1600px; margin: 0 auto; }
 select, input[type=search], button, summary { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; }
 button { cursor: pointer; }
 button:hover:not(:disabled) { border-color: var(--accent); }
@@ -188,10 +202,6 @@ tr.detail td { white-space: normal; background: var(--bg); max-width: none; }
 .scard.open:hover .close { color: var(--bad); }
 .scard.open svg.spark { height: 72px; }
 .scard .top .pill + .close { margin-left: 8px; }
-#sortby { margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--accent); }
-#sortby[hidden] { display: none; }
-#sortby .chip { margin: 0; color: var(--text); font-weight: 400; }
-#sortby .chip.on { background: var(--accent); color: #fff; outline: none; border-color: var(--accent); font-weight: 600; }
 #dash > :first-child { margin-top: 0; }
 details.sec { margin-top: 24px; }
 details.sec > summary { border: 0; background: none; padding: 0; cursor: pointer; font-size: 15px; font-weight: 600; }
@@ -232,9 +242,11 @@ h2 small { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 
 .scard .pct .n { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--c); }
 .scard .pct .l { color: var(--c); font-size: 12px; font-weight: 600; }
 .scard .pend { font-size: 13px; min-height: 1.45em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.scard .top .apps { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); white-space: nowrap; }
-.scard .top .apps svg { flex: none; }
-.scard .top .apps b { color: var(--text); font-weight: 600; }
+.scard .top { flex-wrap: wrap; }
+.scard .top .apps { order: -1; flex: 0 0 100%; margin: 0 0 2px; display: inline-flex; align-items: flex-end; gap: 6px; color: var(--muted); white-space: nowrap; }
+.scard .top .apps svg { flex: none; display: block; }
+.scard .top .apps b { color: var(--text); font-weight: 700; font-size: 22px; line-height: 1; display: block; font-variant-numeric: tabular-nums; }
+.scard .top .name { flex: 1 1 0; min-width: 0; font-size: 12px; font-weight: 600; color: var(--muted); min-height: 2.4em; line-height: 1.2; }
 .scard svg.spark { width: 100%; height: 32px; display: block; }
 .scard svg.spark rect.bar { fill: var(--border); }
 .scard svg.spark rect.bar.on { fill: var(--muted); fill-opacity: .55; }
@@ -247,9 +259,8 @@ h2 small { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 
 .filterbar[hidden] { display: none; }
 .filterbar small { font-weight: 400; }
 .filterbar button { border-color: var(--upd-fg); font-weight: 600; margin-left: auto; }
-.hstate { grid-column: 1 / -1; display: grid; grid-template-columns: var(--hcols); gap: 8px 16px; align-items: start; }
+.hstate { grid-column: 1 / -1; display: grid; grid-template-columns: var(--hcols); gap: 0 16px; align-items: start; }
 .hstate[hidden] { display: none; }
-.hstate .hsep { grid-column: 1 / -1; width: 100%; border: 0; border-top: 1px solid rgba(255,255,255,.3); margin: 0 0 4px; }
 .hs-name[hidden], .hs-explore[hidden] { display: none; }
 .hs-name { grid-column: 1 / span 2; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .hs-name .mclear { font: inherit; font-size: 22px; font-weight: 700; line-height: 1.2; padding: 4px 12px; text-shadow: 0 1px 3px rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.5); border-radius: 5px; background: rgba(255,255,255,.12); color: #fff; cursor: pointer; }
@@ -258,9 +269,7 @@ h2 small { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 
 .hs-explore { grid-column: 3 / -1; min-width: 0; }
 .hs-mini { grid-column: 1 / -1; min-width: 0; }
 .hs-mini[hidden] { display: none; }
-.hs-head { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6); }
-.hs-mini #sortby { margin: 0 0 6px; color: #fff; }
-.hs-mini #sortby .chip { font-size: 11px; padding: 1px 8px; color: var(--text); }
+#minicards[hidden] { display: none; }
 #minicards { color: var(--text); }
 #minicards .cards { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 6px; }
 #minicards .group-head { color: #fff; margin: 8px 0 4px; font-size: 12px; }
@@ -353,11 +362,6 @@ td.prog { width: 1%; white-space: nowrap; }
     </div>
   </nav>
   <section class="about" id="aboutwrap" hidden><button class="aboutclose" id="aboutclose" aria-label="Close" title="Close">✕</button><div id="about">Loading…</div></section>
-  <section class="datanav" id="datanav" aria-label="Data navigation">
-    <div class="dn-ctx"><span class="dn-label">Showing</span><select id="state" aria-label="Select state or All India"></select><button type="button" id="dnreset" class="dnbtn" hidden title="Back to All India">✕ All India</button><span id="dnctx" class="dn-text"></span></div>
-    <label class="hfilter" title="Delisted applications were removed from the portal by the system, usually because they were left incomplete. Turn this on to leave them out of every count, chart and table."><input type="checkbox" id="ignoredel"> Ignore delisted applications</label>
-    <div class="lockbar" id="lockbar"></div>
-  </section>
   <div id="allcard" class="allcard" hidden></div>
   <div class="hmap" id="hmap" hidden></div>
   <div class="hspark" id="hspark" hidden></div>
@@ -367,11 +371,17 @@ td.prog { width: 1%; white-space: nowrap; }
     <select id="exmode" aria-label="Explore projects by" title="Explore projects by"></select>
     <ul class="exlist" id="exlist"></ul>
   </aside>
+  <nav class="datanav" id="datanav" aria-label="Data navigation">
+    <div class="crumbs">
+      <button type="button" id="dnroot" class="cb" title="Back to All India">All India</button>
+      <span class="sep">›</span>
+      <select id="state" class="cb" aria-label="Select state"></select>
+      <span id="lockbar" class="crumbs"></span>
+    </div>
+    <span id="dnctx" class="dn-text"></span>
+  </nav>
   <section class="hstate" id="hstate">
-    <hr class="hsep">
     <div class="hs-mini" id="hsmini" hidden>
-      <h2 class="hs-head">Explore Applications By State</h2>
-    <div id="sortby" role="group" aria-label="Sort states by"><span>Sort by:</span><button data-sort="name" class="chip on" data-dir="↑">Name</button><button data-sort="granted" class="chip">Grant %</button><button data-sort="rejected" class="chip">Rejected %</button><button data-sort="apps" class="chip">Total Applications</button><button data-sort="changes" class="chip">Recent Changes</button></div>
       <div id="minicards"></div>
     </div>
   </section>
@@ -379,7 +389,6 @@ td.prog { width: 1%; white-space: nowrap; }
 <main>
   <section id="dash"></section>
   <section id="viewer" hidden>
-  <h2>Application Detail</h2>
   <div class="bar" id="controls" hidden>
     <input type="search" id="q" placeholder="Search rows…" size="28">
     <button type="button" id="verbtn" class="verbtn" aria-expanded="false" aria-controls="verpanel" title="Compare with earlier snapshots of this state's data"></button>
@@ -1118,19 +1127,16 @@ const docIcon = (n, max) => {
   const h = Math.round(10 + 14 * Math.sqrt(Math.min(1, n / max)));
   return `<svg class="doc" height="${h}" width="${Math.round(h * .8)}" viewBox="0 0 16 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M2 1h8l4 4v14H2z"/><path d="M10 1v4h4M5 9h6M5 12h6M5 15h4"/></svg>`;
 };
-let cardSort = 'name', cardFlip = false;
-const SORTS = {
-  name: () => 0,
-  granted: (s, a) => -(+s.ec_granted / a),
-  rejected: (s, a) => -(+s.ec_rejected / a),
-  apps: (s, a) => -a,
-  changes: s => -((+s.window_added || 0) + (+s.window_updated || 0)),
-};
 function sortStates(list, scopes) {
   const has = ([c]) => +scopes[c]?.stat.applications > 0;
-  const key = ([c]) => { const s = scopes[c].stat; return SORTS[cardSort](s, +s.applications); };
-  const dir = cardFlip ? -1 : 1;
-  return list.slice().sort((x, y) => has(x) !== has(y) ? has(y) - has(x) : (key(x) - key(y) || x[1].localeCompare(y[1])) * dir);
+  const f = { st: lock.st, pc: lock.pc, ty: lock.ty };
+  const on = f.st || f.pc || f.ty || lock.year != null;
+  const key = ([c]) => {
+    if (!on) return 0;
+    const m = cubeSeries(scopes[c], f);
+    return -(lock.year != null ? m.get(lock.year) || 0 : d3.sum([...m.values()]));
+  };
+  return list.slice().sort((x, y) => has(x) !== has(y) ? has(y) - has(x) : key(x) - key(y) || x[1].localeCompare(y[1]));
 }
 
 function cardMaker(scopes) {
@@ -1138,6 +1144,9 @@ function cardMaker(scopes) {
   const years = [d3.min(all) ?? new Date().getFullYear(), d3.max(all) ?? new Date().getFullYear()];
   const peaks = Object.keys(STATES).map(c => d3.max(scopes[c]?.lists.applications_by_year || [], r => +r.value) || 0).sort(d3.ascending);
   const yMax = Math.max(1, d3.quantile(peaks, .9));
+  const fl = { st: lock.st, pc: lock.pc, ty: lock.ty }, fon = fl.st || fl.pc || fl.ty || lock.year != null;
+  const cnt = c => { const m = cubeSeries(scopes[c], fl); return lock.year != null ? m.get(lock.year) || 0 : d3.sum([...m.values()]); };
+  const maxN = fon ? d3.max(Object.keys(STATES), c => scopes[c] ? cnt(c) : 0) || 1 : 0;
   const maxApps = d3.max(Object.keys(STATES), c => +scopes[c]?.stat.applications || 0) || 1;
   return ([code, name], mode) => {
     const expanded = mode === 'open';
@@ -1148,17 +1157,18 @@ function cardMaker(scopes) {
     const pill = status === 'ok' ? '' : `<span class="pill ${status}">${RUN_LABELS[status] || status}</span>`;
     const chg = `Last 30 days: <b>${nf(s.window_added)}</b> new · <b>${nf(s.window_updated)}</b> updated`;
     const own = d3.max(sc.lists.applications_by_year || [], r => +r.value) || 1;
-    const extra = mode ? `<div class="pend">${nf(projects)} projects tracked${ignoreDel ? ' (excl. delisted)' : ''}</div>` : '';
+    const extra = mode ? `<div class="trk"><span>${nf(projects)} projects tracked</span><label class="hfilter" title="Delisted applications were removed from the portal by the system, usually because they were left incomplete. Turn this on to leave them out of every count, chart and table."><input type="checkbox" id="ignoredel"${ignoreDel ? ' checked' : ''}> Ignore delisted</label></div>` : '';
     const series = {};
     PIPE.bar.forEach(c => { series[c.id] = new Map((sc.lists[`year_${c.id}`] || []).map(r => [+r.label, +r.value])); });
     const sa = { years, apps: new Map((sc.lists.applications_by_year || []).map(r => [+r.label, +r.value])), series, shared: yMax, own };
     sa.lineMax = d3.max(Object.values(series), m => d3.max([...m.values()])) || 1;
     sparkArgs.set(mode && mode !== 'mini' ? `${mode}:${code}` : code, sa);
-    if (mode === 'mini') return `<button class="scard mini" data-code="${code}" data-k="${code}" data-acts="granted,rejected" data-apps="${apps}"><div class="top"><span class="name" title="${esc(name)}">${esc(name)}</span></div><div class="pct">${statHtml(s, apps, 'granted', 'L')}${statHtml(s, apps, 'rejected', 'R')}</div><div class="pipe">${pipeHtml(s, apps)}</div>${sparkHtml(sa, DEFAULT_ACTS, yMax)}<div class="pend"></div><div class="chg">${chg.replace('Last 30 days: ', '').replace(' · ', '<br>')}</div></button>`;
+    const nn = fon ? cnt(code) : apps;
+    if (mode === 'mini') return `<button class="scard mini" data-code="${code}" data-k="${code}" data-acts="granted,rejected" data-apps="${apps}"><div class="top"><span class="apps" data-cat="apps" title="${nf(nn)} ${fon ? 'matching ' : ''}applications">${docIcon(nn, fon ? maxN : maxApps)}<b>${nf(nn)}</b></span><span class="name" title="${esc(name)}">${esc(name)}</span></div><div class="pct">${statHtml(s, apps, 'granted', 'L')}${statHtml(s, apps, 'rejected', 'R')}</div><div class="pipe">${pipeHtml(s, apps)}</div>${sparkHtml(sa, DEFAULT_ACTS, yMax)}<div class="pend"></div><div class="chg">${chg.replace('Last 30 days: ', '').replace(' · ', '<br>')}</div></button>`;
     const attrs = mode === 'all' ? `class="scard allc" data-k="all:${code}" data-acts="granted,rejected" data-apps="${apps}" data-pend=""` : expanded ? `class="scard open" data-k="open:${code}" data-acts="granted,rejected" data-apps="${apps}" data-pend="${esc(defaultPend(s, apps))}" data-reset="1" title="Close and show all of India"` : `class="scard" data-code="${code}" data-k="${code}" data-acts="granted,rejected" data-apps="${apps}" data-pend="${esc(defaultPend(s, apps))}"`;
     const close = expanded ? '<span class="close" aria-label="Close">✕</span>' : '';
     const tag = mode === 'all' ? 'div' : 'button', nameHtml = mode === 'all' ? `<span class="name">${esc(name)}</span>` : `<span class="name">${esc(name)}</span>`;
-    return `<${tag} ${attrs}>${mode === 'all' ? close : ''}<div class="top">${nameHtml}${pill}<span class="apps" data-cat="apps" title="${nf(apps)} applications"><b>${nf(apps)}</b>${docIcon(apps, maxApps)}</span>${mode === 'all' ? '' : close}</div><div class="pct">${statHtml(s, apps, 'granted', 'L')}${statHtml(s, apps, 'rejected', 'R')}</div><div class="pipe">${pipeHtml(s, apps)}</div><div class="pend">${defaultPend(s, apps)}</div>${extra}${sparkHtml(sa, DEFAULT_ACTS, mode ? own : yMax)}<div class="chg">${chg}</div></${tag}>`;
+    return `<${tag} ${attrs}>${mode === 'all' ? close : ''}<div class="top"><span class="apps" data-cat="apps" title="${nf(apps)} applications">${docIcon(apps, maxApps)}<b>${nf(apps)}</b></span>${nameHtml}${pill}${mode === 'all' ? '' : close}</div><div class="pct">${statHtml(s, apps, 'granted', 'L')}${statHtml(s, apps, 'rejected', 'R')}</div><div class="pipe">${pipeHtml(s, apps)}</div><div class="pend">${defaultPend(s, apps)}</div>${extra}${sparkHtml(sa, DEFAULT_ACTS, mode ? own : yMax)}<div class="chg">${chg}</div></${tag}>`;
   };
 }
 
@@ -1170,7 +1180,7 @@ function stateCards(scopes, open) {
 
 function syncPicker(scopes) {
   const cur = $('state').value;
-  $('state').innerHTML = '<option value="">All India</option>' + groupedStates().map(([label, list]) =>
+  $('state').innerHTML = '<option value="">Choose state…</option>' + groupedStates().map(([label, list]) =>
     `<optgroup label="${label}">${list.map(([c, n]) => `<option value="${c}"${+scopes[c]?.stat.projects ? '' : ' disabled'}>${n}</option>`).join('')}</optgroup>`).join('');
   $('state').value = cur;
 }
@@ -1201,6 +1211,7 @@ async function renderDash(code) {
   renderMap(scopes, open);
   renderSparks(scopes, open);
   $('minicards').innerHTML = open ? '' : stateCards(scopes);
+  syncCards();
   $('hstate').hidden = !!open;
   $('hsmini').hidden = !!open;
   document.querySelector('header').classList.toggle('stateview', !!open);
@@ -1245,11 +1256,12 @@ async function renderMap(scopes, open) {
   const box = $('hmap'), outline = await loadOutline();
   if (!outline) { box.hidden = true; return; }
   box.hidden = false;
-  const w = box.clientWidth || 300, h = (box.clientHeight || 260) - 38;
+  const w = box.clientWidth || 300, h = (box.clientHeight || 260) - 64;
   const proj = d3.geoMercator().fitExtent([[6, 6], [w - 6, h - 18]], outline), path = d3.geoPath(proj);
   const all = Object.keys(CENTROIDS).map(c => ({ code: c, name: STATES[c], n: +scopes[c]?.stat.applications || 0 })).filter(d => d.n > 0);
-  d3.select(box).html('').append('div').attr('class', 'mh').html('<span class="mt"></span>');
-  d3.select(box).append('a').attr('class', 'mlink').attr('href', mapUrl(open || '')).attr('target', '_blank').attr('rel', 'noopener').text(open ? `Open ${STATES[open]} on the map ↗` : 'Open on the map ↗');
+  d3.select(box).html('').append('div').attr('class', 'mtitle').html(open ? `<span>${esc(STATES[open])}</span><button type="button" id="mclear" title="Back to All India" aria-label="Clear selected state">✕ Clear</button>` : '<span>All India</span>');
+  d3.select(box).append('a').attr('class', 'mlink').attr('href', mapUrl(open || '')).attr('target', '_blank').attr('rel', 'noopener').text('View KML Map ↗');
+  d3.select(box).append('div').attr('class', 'mh').html('<span class="mt"></span>');
   const svg = d3.select(box).append('svg').attr('viewBox', `0 0 ${w} ${h}`).attr('role', 'img').attr('aria-label', 'Map of India with a pie chart per state or union territory, sized by number of applications and split by status');
   svg.append('path').attr('class', 'out').attr('d', path(outline));
   const pie = d3.pie().sort(null).value(d => d.n), arc = d3.arc().innerRadius(0);
@@ -1307,6 +1319,7 @@ function preview(code) {
 $('hmap').addEventListener('mouseover', e => preview(e.target.closest('.pie[data-code]')?.dataset.code || null));
 $('hmap').addEventListener('mouseleave', () => preview(null));
 $('hmap').addEventListener('click', e => {
+  if (e.target.closest('#mclear')) { $('state').value = ''; selectState(''); return; }
   const c = e.target.closest('.pie[data-code]');
   if (!c) return;
   const code = c.dataset.code === st.open ? '' : c.dataset.code;
@@ -1381,18 +1394,33 @@ function clearYearSoon() {
   clearTimeout(yearClearTimer);
   yearClearTimer = setTimeout(clearYear, 180);
 }
+function markYear(svg, y) {
+  if (!sparkYears) return;
+  const [y0, y1] = sparkYears, mx = 2 + 196 * (y1 > y0 ? (y - y0) / (y1 - y0) : 0);
+  let ln = svg.querySelector('line.ymark');
+  if (!ln) { ln = document.createElementNS('http://www.w3.org/2000/svg', 'line'); ln.setAttribute('class', 'ymark'); ln.setAttribute('y1', 0); ln.setAttribute('y2', 32); svg.appendChild(ln); }
+  ln.setAttribute('x1', mx); ln.setAttribute('x2', mx);
+  ln.classList.toggle('lk', y === lock.year);
+  const yl = svg.nextElementSibling?.classList.contains('yrs') ? svg.nextElementSibling : svg.closest('.hspark')?.querySelector('.yrs');
+  if (yl) {
+    let lab = yl.querySelector('.ylab');
+    if (!lab) { lab = document.createElement('span'); lab.className = 'ylab'; yl.appendChild(lab); }
+    const pc = mx / 2;
+    lab.textContent = y; lab.style.left = `${pc}%`;
+    yl.classList.add('yy');
+    yl.classList.toggle('lk', y === lock.year);
+  }
+}
 function paintYear(y) {
   if (!sparkYears) return;
-  const [y0, y1] = sparkYears, i = y - y0, mx = 2 + 196 * (y1 > y0 ? i / (y1 - y0) : 0);
-  document.querySelectorAll(YEAR_SVGS).forEach(svg => {
-    let ln = svg.querySelector('line.ymark');
-    if (!ln) { ln = document.createElementNS('http://www.w3.org/2000/svg', 'line'); ln.setAttribute('class', 'ymark'); ln.setAttribute('y1', 0); ln.setAttribute('y2', 32); svg.appendChild(ln); }
-    ln.setAttribute('x1', mx); ln.setAttribute('x2', mx);
-  });
+  const [y0] = sparkYears, i = y - y0;
+  document.querySelectorAll(YEAR_SVGS).forEach(svg => markYear(svg, y));
   document.querySelectorAll('.hspark .row').forEach(r => { r.querySelector('.t').textContent = nf(r.dataset.v.split(',')[i] || 0); r.classList.add('byyear'); });
 }
 function unpaintYear() {
-  document.querySelectorAll(YEAR_SVGS.split(', ').map(q => q + ' line.ymark').join(', ')).forEach(l => l.remove());
+  document.querySelectorAll(YEAR_SVGS.split(', ').flatMap(q => [q + ' line.ymark']).join(', ')).forEach(l => l.remove());
+  document.querySelectorAll('.yrs .ylab').forEach(l => l.remove());
+  document.querySelectorAll('.yrs.yy, .yrs.lk').forEach(y => y.classList.remove('yy', 'lk'));
   document.querySelectorAll('.hspark .row').forEach(r => { r.querySelector('.t').textContent = nf(r.dataset.t); r.classList.remove('byyear'); });
 }
 function applyYear(y) {
@@ -1437,7 +1465,8 @@ function renderContext() {
     text += ` · ${nf(y != null ? m.get(y) || 0 : d3.sum([...m.values()]))} match the filters`;
   }
   $('dnctx').textContent = text;
-  $('dnreset').hidden = !st.open;
+  $('dnroot').classList.toggle('on', !st.open);
+  $('state').classList.toggle('on', !!st.open);
 }
 function renderLockBar() {
   if (!PIPE) return;
@@ -1447,9 +1476,14 @@ function renderLockBar() {
   if (lock.ty) parts.push(['ty', `Type: ${TYPES.find(t => t[0] === lock.ty)[1]}`]);
   if (lock.year != null) parts.push(['year', `Year: ${lock.year}`]);
   for (const [f, v] of Object.entries(st.colFilters)) if (v) parts.push([`cf:${f}`, `${f}: ${v.replace(/"/g, '')}`]);
-  $('lockbar').innerHTML = parts.length
-    ? `<span class="dn-label">Filters</span>${parts.map(([k, l]) => `<button type="button" class="lockchip" data-k="${esc(k)}" title="Remove this filter">${esc(l)} ✕</button>`).join('')}<button type="button" class="lockchip" data-k="all">Clear all filters</button>`
-    : '<span class="dn-none">No filters applied</span>';
+  const addOpts = '<option value="">+ Filter</option>'
+    + (lock.st ? '' : `<optgroup label="Status">${[...PIPE.cats].map(([k, c]) => `<option value="st:${esc(k)}">${esc(c.label)}</option>`).join('')}</optgroup>`)
+    + (lock.pc ? '' : `<optgroup label="Category">${PC_LABELS.map(([k, l]) => `<option value="pc:${k}">${esc(l)}</option>`).join('')}</optgroup>`)
+    + (lock.ty ? '' : `<optgroup label="Type">${TYPES.map(([k, l]) => `<option value="ty:${esc(k)}">${esc(l)}</option>`).join('')}</optgroup>`);
+  const sep = '<span class="sep">›</span>';
+  $('lockbar').innerHTML = parts.map(([k, l]) => { const i = l.indexOf(': '); return `${sep}<button type="button" class="cb on" data-k="${esc(k)}" title="Remove this filter"><b>${esc(l.slice(0, i))}</b>${esc(l.slice(i + 2))}<span aria-hidden="true">✕</span></button>`; }).join('')
+    + `${sep}<select class="cb add" id="dnadd" aria-label="Add filter">${addOpts}</select>`
+    + (parts.length > 1 ? '<button type="button" class="cb" data-k="all">Clear all</button>' : '');
   renderContext();
 }
 function setLock(patch) {
@@ -1460,6 +1494,7 @@ function setLock(patch) {
   hoverYear = null;
   syncViews();
   renderLockBar();
+  if (st.scopes && !st.open) { unfocus(); $('minicards').innerHTML = stateCards(st.scopes); syncCards(); }
   if (st.cur) { st.page = 0; renderTable(); }
 }
 const toggleLock = (k, v) => setLock({ [k]: lock[k] === v ? null : v });
@@ -1538,6 +1573,9 @@ function renderAllCard(scopes, code) {
   box.innerHTML = cardMaker(scopes)([cur, cur === 'all' ? 'All India' : STATES[cur]], 'all');
   $('state').value = code || '';
   box.hidden = false;
+  syncCards();
+  const ey = effYear();
+  if (ey != null) box.querySelectorAll('svg.spark').forEach(svg => markYear(svg, ey));
 }
 
 for (const id of ['dash', 'dash2']) {
@@ -1550,7 +1588,10 @@ for (const id of ['dash', 'dash2']) {
 let hovered = null;
 function setScale(card, local) {
   const a = sparkArgs.get(card?.dataset.k);
-  if (a) card.querySelector('svg.spark').innerHTML = sparkInner(a, card.dataset.acts.split(','), local ? a.own : a.shared);
+  if (!a) return;
+  const svg = card.querySelector('svg.spark'), ey = effYear();
+  svg.innerHTML = sparkInner(a, card.dataset.acts.split(','), local ? a.own : a.shared);
+  if (ey != null) markYear(svg, ey);
 }
 function unfocus() {
   setScale(hovered, false);
@@ -1573,18 +1614,6 @@ for (const root of [$('minicards')]) {
   });
   root.addEventListener('mouseleave', () => { unfocus(); if (mini) preview(null); });
 }
-$('sortby').addEventListener('click', e => {
-  const b = e.target.closest('[data-sort]');
-  if (!b || !st.scopes) return;
-  cardFlip = b.dataset.sort === cardSort ? !cardFlip : false;
-  cardSort = b.dataset.sort;
-  $('sortby').querySelectorAll('[data-sort]').forEach(x => {
-    x.classList.toggle('on', x === b);
-    x.dataset.dir = x === b ? (cardFlip === (x.dataset.sort === 'name') ? '↓' : '↑') : '';
-  });
-  unfocus();
-  $('minicards').innerHTML = stateCards(st.scopes);
-});
 
 const linkedCards = src => [src, ...document.querySelectorAll('#minicards .scard.mini[data-code], #allcard .scard')].filter((c, i, a) => a.indexOf(c) === i);
 $('allcard').addEventListener('mouseover', e => { if (e.target.closest('.chg')) $('minicards').classList.add('show-chg'); });
@@ -1677,6 +1706,7 @@ $('tbl').addEventListener('mousemove', e => {
 });
 $('tbl').addEventListener('mouseleave', () => { tip.hidden = true; tip.classList.remove('wrap'); });
 onCards('click', e => {
+  if (e.target.closest('.hfilter')) return;
   const hit = e.target.closest('rect.hit');
   if (hit) { toggleLock('year', +hit.dataset.y); return; }
   const zone = e.target.closest('.seg, .pn'), cat = zone?.dataset.cat;
@@ -1701,21 +1731,26 @@ $('dash').addEventListener('click', e => {
   if (tr) { $('state').value = tr.dataset.code; selectState(tr.dataset.code); }
 });
 
-$('state').innerHTML = '<option value="">All India</option>' + groupedStates().map(([label, list]) => `<optgroup label="${label}">${list.map(([c, n]) => `<option value="${c}">${n}</option>`).join('')}</optgroup>`).join('');
+$('state').innerHTML = '<option value="">Choose state…</option>' + groupedStates().map(([label, list]) => `<optgroup label="${label}">${list.map(([c, n]) => `<option value="${c}">${n}</option>`).join('')}</optgroup>`).join('');
 $('state').addEventListener('change', e => selectState(e.target.value));
 $('older').addEventListener('click', () => go(1));
 $('newer').addEventListener('click', () => go(-1));
 $('version').addEventListener('change', e => { st.idx = +e.target.value; showVersion(); });
 $('q').addEventListener('input', () => { st.page = 0; renderTable(); });
 $('filterbar').addEventListener('click', e => { if (e.target.id === 'resetfilters') resetFilters(); });
-$('ignoredel').checked = ignoreDel;
-$('ignoredel').addEventListener('change', e => {
+document.addEventListener('change', e => {
+  if (e.target.id !== 'ignoredel') return;
   ignoreDel = e.target.checked;
   try { localStorage.setItem('ignoreDelisted', ignoreDel ? '1' : '0'); } catch (err) {}
   renderDash(st.code);
   if (st.code && st.commits.length) showVersion();
 });
-$('dnreset').addEventListener('click', () => { $('state').value = ''; selectState(''); });
+$('dnroot').addEventListener('click', () => { $('state').value = ''; selectState(''); });
+$('lockbar').addEventListener('change', e => {
+  if (e.target.id !== 'dnadd' || !e.target.value) return;
+  const i = e.target.value.indexOf(':');
+  setLock({ [e.target.value.slice(0, i)]: e.target.value.slice(i + 1) });
+});
 $('exlist').addEventListener('mouseover', e => {
   const key = e.target.closest('[data-key]')?.dataset.key;
   if (key == null) return;
