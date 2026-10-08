@@ -57,6 +57,7 @@ svg line.ymark { stroke: #fff; stroke-width: 1.5; stroke-opacity: .85; vector-ef
 .hmap svg { width: 100%; height: calc(100% - 64px); margin-top: 64px; display: block; }
 .hmap .mtitle { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 6px; font-size: 18px; font-weight: 700; line-height: 1.2; z-index: 1; }
 .hmap .mtitle button { font: inherit; font-size: 12px; font-weight: 600; line-height: 1; padding: 3px 8px; border: 1px solid rgba(255,255,255,.6); border-radius: 999px; background: rgba(255,255,255,.18); color: #fff; cursor: pointer; }
+.hmap .mtitle button[hidden] { display: none; }
 .hmap .mtitle button:hover { background: rgba(255,255,255,.35); }
 .hmap .mlink { position: absolute; left: 0; top: 26px; font-size: 12px; font-weight: 600; color: #9fe3cf; text-decoration: none; z-index: 1; }
 .hmap .mlink:hover { text-decoration: underline; }
@@ -169,12 +170,13 @@ details.cols label { display: block; padding: 2px 0; }
 .wrap { overflow: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; max-height: 70vh; }
 table { border-collapse: collapse; width: 100%; }
 th, td { padding: 6px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-thead tr:first-child th { height: 34px; }
-thead tr.filters th { top: 34px; cursor: default; padding: 3px 6px; font-weight: 400; }
-thead tr.filters input { width: 100%; min-width: 70px; padding: 2px 6px; font-size: 12px; }
+thead tr:first-child th { height: 48px; line-height: 1.2; white-space: normal; overflow: hidden; vertical-align: middle; }
+thead tr.filters th { top: 48px; cursor: default; padding: 3px 6px; font-weight: 400; }
+thead tr.filters input, thead tr.filters select { width: 100%; min-width: 40px; padding: 2px 6px; font-size: 12px; }
 th { position: sticky; top: 0; background: var(--panel); cursor: pointer; user-select: none; z-index: 1; }
 th.sorted::after { content: " ▲"; font-size: 10px; }
 th.sorted.desc::after { content: " ▼"; }
+a.amchebtn { display: inline-block; font-size: 12px; font-weight: 600; line-height: 1.2; padding: 2px 8px; margin-right: 4px; border: 1px solid var(--border); border-radius: 999px; text-decoration: none; background: var(--bg); white-space: nowrap; }
 tr.item { cursor: pointer; }
 tr.item:hover td { filter: brightness(.97); }
 tr.added td { background: var(--add-bg); }
@@ -188,7 +190,7 @@ td.chg { background: var(--upd-bg); white-space: normal; }
 .new { background: var(--add-bg); color: var(--add-fg); padding: 0 3px; border-radius: 3px; }
 .empty { font-style: italic; opacity: .7; }
 tr.detail td { white-space: normal; background: var(--bg); max-width: none; }
-.fields { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 2px 12px; font-size: 13px; }
+.fields { position: sticky; left: 0; box-sizing: border-box; width: calc(var(--wrapw, 100%) - 20px); display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 2px 12px; font-size: 13px; }
 .fields .k { color: var(--muted); }
 .fields .v { overflow-wrap: anywhere; }
 .pager { display: flex; gap: 8px; align-items: center; justify-content: center; padding: 12px; color: var(--muted); }
@@ -448,7 +450,12 @@ function withoutDelisted(data) {
   for (const [id, row] of data.rows) if (!isDelisted(row[STATUS_FIELD])) rows.set(id, row);
   return { ...data, rows };
 }
-const DEFAULT_COLS = ['Proposal Number', 'Project Name', 'Organization Name', 'District', 'Proposal Type', STATUS_FIELD, 'Application Date', 'Grant Date', 'Total Cost (Lakhs)'];
+const CLEARANCE_DAYS = 'Application Age (Days)';
+function clearanceDays(applied, granted) {
+  const a = Date.parse(applied), g = granted ? Date.parse(granted) : Date.now();
+  return isNaN(a) || isNaN(g) ? '' : String(Math.max(0, Math.round((g - a) / 864e5)));
+}
+const DEFAULT_COLS = [STATUS_FIELD, CLEARANCE_DAYS, 'Proposal Number', 'Project Name', 'Total Cost (Lakhs)', 'Organization Name', 'District', 'Proposal Type', 'Application Date', 'Grant Date'];
 const STATES = {
   1: 'Jammu And Kashmir', 2: 'Himachal Pradesh', 3: 'Punjab', 4: 'Chandigarh', 5: 'Uttarakhand', 6: 'Haryana', 7: 'Delhi',
   8: 'Rajasthan', 9: 'Uttar Pradesh', 10: 'Bihar', 11: 'Sikkim', 12: 'Arunachal Pradesh', 13: 'Nagaland', 14: 'Manipur',
@@ -545,6 +552,9 @@ function classify(status) {
   }
   return hit;
 }
+const PROGRESS = 'Progress';
+const progCat = it => classify(it.row[STATUS_FIELD])?.cat.id;
+const progLabel = v => PIPE?.cats.get(v)?.label || v;
 function progressHtml(status) {
   const p = classify(status);
   if (!p) return '';
@@ -587,8 +597,13 @@ function loadCsv(sha, code) {
     .then(text => {
       const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
       const rows = new Map();
-      parsed.data.forEach((row, i) => rows.set(row.ID || `row-${i}`, row));
-      return { fields: parsed.meta.fields || [], rows };
+      const fields = parsed.meta.fields || [];
+      const derive = fields.includes('Application Date') && fields.includes('Grant Date');
+      parsed.data.forEach((row, i) => {
+        if (derive) row[CLEARANCE_DAYS] = clearanceDays(row['Application Date'], row['Grant Date']);
+        rows.set(row.ID || `row-${i}`, row);
+      });
+      return { fields: derive ? [...fields, CLEARANCE_DAYS] : fields, rows };
     });
   p.catch(() => csvCache.delete(key));
   csvCache.set(key, p);
@@ -718,6 +733,7 @@ function filterItems(skipCol) {
     if (f.ty && typeOf(it.row) !== f.ty) return false;
     if (year != null && String(it.row['Application Date'] ?? '').slice(0, 4) !== String(year)) return false;
     for (const [f, v] of cf) {
+      if (f === PROGRESS) { if (progCat(it) !== v) return false; continue; }
       const cell = String(it.row[f] ?? '').toLowerCase();
       if (!parseTerms(v).every(t => t === BLANK ? !cell.trim() : cell.includes(t))) return false;
     }
@@ -729,13 +745,18 @@ function filterItems(skipCol) {
   });
 }
 
+const NUM_RX = /^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i;
 function applyFilters() {
   const { f, dir } = st.sort || DEFAULT_SORT;
   st.shown = filterItems(null).sort((x, y) => {
-    const a = x.row[f] ?? '', b = y.row[f] ?? '';
-    const na = parseFloat(a), nb = parseFloat(b);
-    const cmp = !isNaN(na) && !isNaN(nb) && String(na) === a.trim() && String(nb) === b.trim() ? na - nb : a.localeCompare(b);
-    return cmp * dir;
+    if (f === PROGRESS) {
+      const px = classify(x.row[STATUS_FIELD]), py = classify(y.row[STATUS_FIELD]);
+      return ((px?.stage ?? 0) - (py?.stage ?? 0) || (px?.cat.label ?? '').localeCompare(py?.cat.label ?? '')) * dir;
+    }
+    const a = String(x.row[f] ?? '').trim(), b = String(y.row[f] ?? '').trim();
+    if (!a || !b) return a === b ? 0 : a ? -1 : 1;
+    const na = NUM_RX.test(a) ? +a : NaN, nb = NUM_RX.test(b) ? +b : NaN;
+    return (!isNaN(na) && !isNaN(nb) ? na - nb : a.localeCompare(b)) * dir;
   });
 }
 
@@ -782,22 +803,50 @@ function renderSummary() {
   $('meta').innerHTML = meta;
 }
 
+const URL_RX = /https?:\/\/[^\s"'<>[\](){}|\\^`,]+/g;
+function linkify(v) {
+  const t = String(v ?? '');
+  let out = '', i = 0, m;
+  URL_RX.lastIndex = 0;
+  while ((m = URL_RX.exec(t))) {
+    const url = m[0].replace(/[.;:!?]+$/, '');
+    out += esc(t.slice(i, m.index)) + `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a>`;
+    i = m.index + url.length;
+    URL_RX.lastIndex = i;
+  }
+  return out + esc(t.slice(i));
+}
+
+const KML_FIELD = 'KML URLs';
+function amcheUrl(u) {
+  let q;
+  try { q = new URL(u).searchParams; } catch (e) { return null; }
+  const doc = q.get('docTypemappingId'), ref = q.get('refId'), type = (q.get('refType') || '').toLowerCase(), uuid = q.get('uuid');
+  if (!doc || !ref || !type || !uuid) return null;
+  return `https://amche.in/dev/docs/guides/embed-osm-india/?layers=parivesh:${doc}/${ref}/${type}/${uuid},mapbox-satellite&zoomTo=parivesh-${ref}-${doc}`;
+}
+function kmlButtons(v) {
+  const urls = (String(v ?? '').match(URL_RX) || []).map(amcheUrl).filter(Boolean);
+  return urls.map((u, i) => `<a class="amchebtn" href="${esc(u)}" target="_blank" rel="noopener">View on amche.in${urls.length > 1 ? ` (${i + 1})` : ''}</a>`).join(' ');
+}
+const withKml = (f, v, html) => f === KML_FIELD ? `${kmlButtons(v)} ${html}` : html;
+
 function cellHtml(it, f) {
   const v = it.row[f] ?? '';
   const ch = it.changeMap?.[f];
   if (ch) {
-    const old = ch.a === '' ? '<span class="old empty">empty</span>' : `<span class="old">${esc(ch.a)}</span>`;
-    const nu = ch.b === '' ? '<span class="new empty">empty</span>' : `<span class="new">${esc(ch.b)}</span>`;
+    const old = ch.a === '' ? '<span class="old empty">empty</span>' : `<span class="old">${linkify(ch.a)}</span>`;
+    const nu = ch.b === '' ? '<span class="new empty">empty</span>' : `<span class="new">${linkify(ch.b)}</span>`;
     return old + nu;
   }
   if (f === 'Proposal Number' && it.row.proposal_url) return `<a href="${esc(it.row.proposal_url)}" target="_blank" rel="noopener">${esc(v)}</a>`;
-  return esc(v);
+  return withKml(f, v, linkify(v));
 }
 
 function detailHtml(it) {
   const rows = it.type === 'updated'
-    ? it.changes.map(c => `<div class="k">${esc(c.f)}</div><div class="v"><span class="old${c.a === '' ? ' empty' : ''}">${c.a === '' ? 'empty' : esc(c.a)}</span><span class="new${c.b === '' ? ' empty' : ''}">${c.b === '' ? 'empty' : esc(c.b)}</span></div>`)
-    : Object.entries(it.row).filter(([, v]) => v !== '' && v != null).map(([k, v]) => `<div class="k">${esc(k)}</div><div class="v">${esc(v)}</div>`);
+    ? it.changes.map(c => `<div class="k">${esc(c.f)}</div><div class="v"><span class="old${c.a === '' ? ' empty' : ''}">${c.a === '' ? 'empty' : linkify(c.a)}</span><span class="new${c.b === '' ? ' empty' : ''}">${c.b === '' ? 'empty' : linkify(c.b)}</span></div>`)
+    : Object.entries(it.row).filter(([, v]) => v !== '' && v != null).map(([k, v]) => `<div class="k">${esc(k)}</div><div class="v">${withKml(k, v, linkify(v))}</div>`);
   return `<div class="fields">${rows.join('')}</div>`;
 }
 
@@ -805,7 +854,7 @@ function activeFilters() {
   const parts = [];
   const q = $('q').value.trim();
   if (q) parts.push(`search “${q}”`);
-  for (const [f, v] of Object.entries(st.colFilters)) if (v.trim()) parts.push(`${f}: ${v.trim()}`);
+  for (const [f, v] of Object.entries(st.colFilters)) if (v.trim()) parts.push(`${f}: ${f === PROGRESS ? progLabel(v) : v.trim()}`);
   if (st.filter !== 'all') parts.push(st.filter);
   if (st.transition) parts.push(st.transition);
   return parts;
@@ -829,6 +878,18 @@ function renderFilterBar() {
   bar.innerHTML = `<span>Filtered: ${nf(st.shown.length)} rows shown</span><small>${parts.map(esc).join(' · ')}</small><button id="resetfilters">Reset filters</button>`;
 }
 
+function setWrapWidth() {
+  const w = $('tablewrap').clientWidth;
+  if (w) $('tablewrap').style.setProperty('--wrapw', `${w}px`);
+}
+window.addEventListener('resize', setWrapWidth);
+
+function progFilterHtml() {
+  if (!PIPE) return '';
+  const cur = st.colFilters[PROGRESS] || '';
+  return `<select data-cf="${PROGRESS}" aria-label="Filter by progress"><option value="">All</option>${PIPE.categories.map(c => `<option value="${esc(c.id)}"${c.id === cur ? ' selected' : ''}>${esc(c.label)}</option>`).join('')}</select>`;
+}
+
 function renderTable(opts = {}) {
   applyFilters();
   $('viewer').classList.toggle('previewing', previewing());
@@ -837,8 +898,8 @@ function renderTable(opts = {}) {
   st.page = Math.min(st.page, pages - 1);
   const slice = st.shown.slice(st.page * PAGE_SIZE, (st.page + 1) * PAGE_SIZE);
   const sort = st.sort || DEFAULT_SORT;
-  const head = `<tr><th style="width:22px"></th><th>Progress</th>${st.cols.map(f => `<th data-sort="${esc(f)}" class="${sort.f === f ? 'sorted' + (sort.dir < 0 ? ' desc' : '') : ''}">${esc(f)}</th>`).join('')}</tr>
-    <tr class="filters"><th></th><th></th>${st.cols.map(f => `<th><input type="search" data-cf="${esc(f)}" placeholder="Filter" value="${esc(st.colFilters[f] || '')}"></th>`).join('')}</tr>`;
+  const head = `<tr><th style="width:22px"></th><th data-sort="${PROGRESS}" class="${sort.f === PROGRESS ? 'sorted' + (sort.dir < 0 ? ' desc' : '') : ''}">Progress</th>${st.cols.map(f => `<th data-sort="${esc(f)}" class="${sort.f === f ? 'sorted' + (sort.dir < 0 ? ' desc' : '') : ''}">${esc(f)}</th>`).join('')}</tr>
+    <tr class="filters"><th></th><th>${progFilterHtml()}</th>${st.cols.map(f => `<th><input type="search" data-cf="${esc(f)}" placeholder="Filter" value="${esc(st.colFilters[f] || '')}"></th>`).join('')}</tr>`;
   const body = slice.map(it => {
     const k = `${it.type}:${it.id}`;
     const open = st.expanded.has(k);
@@ -851,6 +912,7 @@ function renderTable(opts = {}) {
   }).join('');
   $('tbl').innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
   $('tablewrap').hidden = !slice.length;
+  setWrapWidth();
   $('status').hidden = !!slice.length;
   if (!slice.length) $('status').textContent = hasChanges() && $('onlychg').checked ? 'No changed rows match the current filters.' : 'No rows match the current filters.';
   if (!opts.preview || opts.explore) renderExplore();
@@ -1261,7 +1323,8 @@ async function renderMap(scopes, open) {
   const w = box.clientWidth || 300, h = (box.clientHeight || 260) - 64;
   const proj = d3.geoMercator().fitExtent([[6, 6], [w - 6, h - 18]], outline), path = d3.geoPath(proj);
   const all = Object.keys(CENTROIDS).map(c => ({ code: c, name: STATES[c], n: +scopes[c]?.stat.applications || 0 })).filter(d => d.n > 0);
-  d3.select(box).html('').append('div').attr('class', 'mtitle').html(open ? `<span>${esc(STATES[open])}</span><button type="button" id="mclear" title="Back to All India" aria-label="Clear selected state">✕ Clear</button>` : '<span>All India</span>');
+  const anyF = Object.values(lock).some(v => v != null) || Object.values(st.colFilters).some(Boolean);
+  d3.select(box).html('').append('div').attr('class', 'mtitle').html(`${open ? `<span>${esc(STATES[open])}</span><button type="button" id="mclear" title="Back to All India" aria-label="Clear selected state">✕ Clear</button>` : '<span>All India</span>'}<button type="button" id="mreset" title="Remove all filters"${anyF ? '' : ' hidden'}>Reset filters</button>`);
   d3.select(box).append('a').attr('class', 'mlink').attr('href', mapUrl(open || '')).attr('target', '_blank').attr('rel', 'noopener').text('View KML Map ↗');
   d3.select(box).append('div').attr('class', 'mh').html('<span class="mt"></span>');
   const svg = d3.select(box).append('svg').attr('viewBox', `0 0 ${w} ${h}`).attr('role', 'img').attr('aria-label', 'Map of India with a pie chart per state or union territory, sized by number of applications and split by status');
@@ -1321,6 +1384,7 @@ function preview(code) {
 $('hmap').addEventListener('mouseover', e => preview(e.target.closest('.pie[data-code]')?.dataset.code || null));
 $('hmap').addEventListener('mouseleave', () => preview(null));
 $('hmap').addEventListener('click', e => {
+  if (e.target.closest('#mreset')) { st.colFilters = {}; setLock({ st: null, pc: null, ty: null, year: null }); return; }
   if (e.target.closest('#mclear')) { $('state').value = ''; selectState(''); return; }
   const c = e.target.closest('.pie[data-code]');
   if (!c) return;
@@ -1381,8 +1445,9 @@ function renderSparks(scopes, code) {
   const cats = PC_LABELS.map(([id, name]) => row(`pc-${id}`, name, `pc:${id}`, { st: flt.st, pc: id, ty: flt.ty }, 'pc', `pc_${id}`)).join('');
   const types = TYPES.map(([id, name]) => row(`ty-${id}`, name, `ty:${id}`, { st: flt.st, pc: flt.pc, ty: id }, 'ty', `ty_${id}`)).join('');
   const yrsHtml = `<div class="yrs"><span>${y0}</span><span>${y1}</span></div>`;
-  const sub = (own, base) => { const o = ['st', 'pc', 'ty'].filter(k => k !== own && flt[k]).map(k => label[k]).join(' · '); return o ? `${base} · ${esc(o)}` : base; };
-  boxes[0].innerHTML = `<div class="hs-title">${sub('st', 'Applications by year')}</div>${status}${yrsHtml}`;
+  const lockLabel = { st: lock.st && PIPE.cats.get(lock.st)?.label, pc: lock.pc && PC_LABELS.find(l => l[0] === lock.pc)?.[1], ty: lock.ty && TYPES.find(t => t[0] === lock.ty)?.[1] };
+  const sub = (own, base) => { const o = ['st', 'pc', 'ty'].filter(k => k !== own && lock[k]).map(k => lockLabel[k]).join(' · '); return o ? `${base} · ${esc(o)}` : base; };
+  boxes[0].innerHTML = `<div class="hs-title">${sub('st', 'By application status')}</div>${status}${yrsHtml}`;
   boxes[1].innerHTML = `<div class="hs-title">${sub('pc', 'By project category')}</div>${cats}${yrsHtml}`;
   boxes[2].innerHTML = `<div class="hs-title">${sub('ty', 'By clearance type')}</div>${types}${yrsHtml}`;
   boxes.forEach(b => { b.hidden = false; });
@@ -1477,15 +1542,16 @@ function renderLockBar() {
   if (lock.pc) parts.push(['pc', `Category: ${PC_LABELS.find(l => l[0] === lock.pc)[1]}`]);
   if (lock.ty) parts.push(['ty', `Type: ${TYPES.find(t => t[0] === lock.ty)[1]}`]);
   if (lock.year != null) parts.push(['year', `Year: ${lock.year}`]);
-  for (const [f, v] of Object.entries(st.colFilters)) if (v) parts.push([`cf:${f}`, `${f}: ${v.replace(/"/g, '')}`]);
+  for (const [f, v] of Object.entries(st.colFilters)) if (v) parts.push([`cf:${f}`, `${f}: ${f === PROGRESS ? progLabel(v) : v.replace(/"/g, '')}`]);
   const addOpts = '<option value="">+ Filter</option>'
     + (lock.st ? '' : `<optgroup label="Status">${[...PIPE.cats].map(([k, c]) => `<option value="st:${esc(k)}">${esc(c.label)}</option>`).join('')}</optgroup>`)
     + (lock.pc ? '' : `<optgroup label="Category">${PC_LABELS.map(([k, l]) => `<option value="pc:${k}">${esc(l)}</option>`).join('')}</optgroup>`)
     + (lock.ty ? '' : `<optgroup label="Type">${TYPES.map(([k, l]) => `<option value="ty:${esc(k)}">${esc(l)}</option>`).join('')}</optgroup>`);
+  if ($('mreset')) $('mreset').hidden = !parts.length;
   const sep = '<span class="sep">›</span>';
   $('lockbar').innerHTML = parts.map(([k, l]) => { const i = l.indexOf(': '); return `${sep}<button type="button" class="cb on" data-k="${esc(k)}" title="Remove this filter"><b>${esc(l.slice(0, i))}</b>${esc(l.slice(i + 2))}<span aria-hidden="true">✕</span></button>`; }).join('')
     + `${sep}<select class="cb add" id="dnadd" aria-label="Add filter">${addOpts}</select>`
-    + (parts.length > 1 ? '<button type="button" class="cb" data-k="all">Clear all</button>' : '');
+    + (parts.length > 1 ? '<button type="button" class="cb" data-k="all">Reset filters</button>' : '');
   renderContext();
 }
 function setLock(patch) {
@@ -1565,7 +1631,7 @@ const sparkMove = e => {
 };
 for (const id of ['hspark', 'hspark2', 'hspark3']) {
   $(id).addEventListener('mousemove', sparkMove);
-  $(id).addEventListener('mouseleave', () => { tip.hidden = true; });
+  $(id).addEventListener('mouseleave', () => { tip.hidden = true; setPreview({}); clearYearSoon(); });
 }
 
 function renderAllCard(scopes, code) {
@@ -1680,7 +1746,12 @@ onCards('mousemove', e => {
   tip.style.left = `${Math.min(e.clientX + 12, innerWidth - w - 8)}px`;
   tip.style.top = `${e.clientY + 16}px`;
 });
-onCards('mouseleave', () => { tip.hidden = true; });
+onCards('mouseleave', () => {
+  tip.hidden = true;
+  setPreview({});
+  clearYearSoon();
+  syncCards();
+});
 onCards('mouseover', e => {
   const r = e.target.closest?.('rect.hit');
   if (!r) return;
@@ -1764,6 +1835,29 @@ $('exlist').addEventListener('mouseout', e => {
   prevCol = null;
   if (st.cur) renderTable({ preview: true });
 });
+$('exlist').addEventListener('mouseleave', () => {
+  if (!prevCol) return;
+  prevCol = null;
+  if (st.cur) renderTable({ preview: true });
+});
+const HOVER_ZONES = '#hspark, #hspark2, #hspark3, #minicards, #allcard, #exlist, #hmap';
+function resetHover() {
+  tip.hidden = true;
+  if (!previewing() && !hovered) return;
+  const hadCol = !!prevCol;
+  prevCol = null;
+  if (hoverYear != null) clearYear();
+  if (hadCol && st.cur) renderTable({ preview: true });
+  setPreview({});
+  syncCards();
+  unfocus();
+  preview(null);
+}
+document.addEventListener('mousemove', e => {
+  if (!e.target.closest?.(HOVER_ZONES)) resetHover();
+}, { passive: true });
+document.documentElement.addEventListener('mouseleave', resetHover);
+window.addEventListener('blur', resetHover);
 $('exmode').addEventListener('change', e => { cloudMode = e.target.value; renderExplore(); });
 $('exlist').addEventListener('click', e => {
   const key = e.target.closest('[data-key]')?.dataset.key;
