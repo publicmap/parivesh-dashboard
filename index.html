@@ -176,6 +176,7 @@ thead tr.filters input, thead tr.filters select { width: 100%; min-width: 40px; 
 th { position: sticky; top: 0; background: var(--panel); cursor: pointer; user-select: none; z-index: 1; }
 th.sorted::after { content: " ▲"; font-size: 10px; }
 th.sorted.desc::after { content: " ▼"; }
+a.mapicon { display: inline-flex; vertical-align: middle; color: var(--link, inherit); }
 a.amchebtn { display: inline-block; font-size: 12px; font-weight: 600; line-height: 1.2; padding: 2px 8px; margin-right: 4px; border: 1px solid var(--border); border-radius: 999px; text-decoration: none; background: var(--bg); white-space: nowrap; }
 tr.item { cursor: pointer; }
 tr.item:hover td { filter: brightness(.97); }
@@ -450,12 +451,13 @@ function withoutDelisted(data) {
   for (const [id, row] of data.rows) if (!isDelisted(row[STATUS_FIELD])) rows.set(id, row);
   return { ...data, rows };
 }
+const MAP_FIELD = 'Map';
 const CLEARANCE_DAYS = 'Application Age (Days)';
 function clearanceDays(applied, granted) {
   const a = Date.parse(applied), g = granted ? Date.parse(granted) : Date.now();
   return isNaN(a) || isNaN(g) ? '' : String(Math.max(0, Math.round((g - a) / 864e5)));
 }
-const DEFAULT_COLS = [STATUS_FIELD, CLEARANCE_DAYS, 'Proposal Number', 'Project Name', 'Total Cost (Lakhs)', 'Organization Name', 'District', 'Proposal Type', 'Application Date', 'Grant Date'];
+const DEFAULT_COLS = [STATUS_FIELD, CLEARANCE_DAYS, 'Proposal Number', 'Project Name', 'Total Cost (Lakhs)', 'Organization Name', MAP_FIELD, 'District', 'Proposal Type', 'Application Date', 'Grant Date'];
 const STATES = {
   1: 'Jammu And Kashmir', 2: 'Himachal Pradesh', 3: 'Punjab', 4: 'Chandigarh', 5: 'Uttarakhand', 6: 'Haryana', 7: 'Delhi',
   8: 'Rajasthan', 9: 'Uttar Pradesh', 10: 'Bihar', 11: 'Sikkim', 12: 'Arunachal Pradesh', 13: 'Nagaland', 14: 'Manipur',
@@ -599,11 +601,13 @@ function loadCsv(sha, code) {
       const rows = new Map();
       const fields = parsed.meta.fields || [];
       const derive = fields.includes('Application Date') && fields.includes('Grant Date');
+      const hasKml = fields.includes(KML_FIELD);
       parsed.data.forEach((row, i) => {
         if (derive) row[CLEARANCE_DAYS] = clearanceDays(row['Application Date'], row['Grant Date']);
+        if (hasKml) row[MAP_FIELD] = amcheUrls(row[KML_FIELD]).join(';');
         rows.set(row.ID || `row-${i}`, row);
       });
-      return { fields: derive ? [...fields, CLEARANCE_DAYS] : fields, rows };
+      return { fields: [...fields, ...(derive ? [CLEARANCE_DAYS] : []), ...(hasKml ? [MAP_FIELD] : [])], rows };
     });
   p.catch(() => csvCache.delete(key));
   csvCache.set(key, p);
@@ -825,8 +829,14 @@ function amcheUrl(u) {
   if (!doc || !ref || !type || !uuid) return null;
   return `https://amche.in/dev/docs/guides/embed-osm-india/?layers=parivesh:${doc}/${ref}/${type}/${uuid},mapbox-satellite&zoomTo=parivesh-${ref}-${doc}`;
 }
+const amcheUrls = v => (String(v ?? '').match(URL_RX) || []).map(amcheUrl).filter(Boolean);
+const MAP_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16M16 6v16"/></svg>';
+function mapIcons(v) {
+  const urls = String(v ?? '').split(';').filter(Boolean);
+  return urls.map((u, i) => { const t = `View on amche.in${urls.length > 1 ? ` (${i + 1} of ${urls.length})` : ''}`; return `<a class="mapicon" href="${esc(u)}" target="_blank" rel="noopener" title="${t}" aria-label="${t}">${MAP_ICON}</a>`; }).join(' ');
+}
 function kmlButtons(v) {
-  const urls = (String(v ?? '').match(URL_RX) || []).map(amcheUrl).filter(Boolean);
+  const urls = amcheUrls(v);
   return urls.map((u, i) => `<a class="amchebtn" href="${esc(u)}" target="_blank" rel="noopener">View on amche.in${urls.length > 1 ? ` (${i + 1})` : ''}</a>`).join(' ');
 }
 const withKml = (f, v, html) => f === KML_FIELD ? `${kmlButtons(v)} ${html}` : html;
@@ -839,6 +849,7 @@ function cellHtml(it, f) {
     const nu = ch.b === '' ? '<span class="new empty">empty</span>' : `<span class="new">${linkify(ch.b)}</span>`;
     return old + nu;
   }
+  if (f === MAP_FIELD) return mapIcons(v);
   if (f === 'Proposal Number' && it.row.proposal_url) return `<a href="${esc(it.row.proposal_url)}" target="_blank" rel="noopener">${esc(v)}</a>`;
   return withKml(f, v, linkify(v));
 }
