@@ -126,6 +126,7 @@ header h1 a.home:hover { text-decoration: underline; }
 header.stateview { --hcols: 260px minmax(220px, 340px) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(230px, 300px); }
 .scard .trk { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: 13px; }
 .scard .trk .hfilter { font-size: 12px; padding: 2px 8px; color: inherit; background: transparent; border-color: currentColor; }
+@media (hover: hover) { .scard .trk .hfilter { visibility: hidden; } .scard:hover .trk .hfilter, .scard .trk .hfilter:focus-within, .scard .trk .hfilter:has(input:checked) { visibility: visible; } }
 .hfilter { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #fff; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.25); border-radius: 8px; padding: 4px 10px; cursor: pointer; text-shadow: none; }
 .health { align-self: flex-start; text-align: left; font-size: 12px; line-height: 1.5; color: rgba(255,255,255,.88); background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.25); border-radius: 8px; padding: 6px 10px; text-shadow: none; }
 .allcard { width: 100%; align-self: start; color: var(--text); text-shadow: none; }
@@ -285,8 +286,9 @@ h2 small { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 
 .scard.mini .pipe { height: 6px; margin: 0; }
 .scard.mini .pend { font-size: 9.5px; min-height: 1.3em; line-height: 1.3; }
 .scard.mini .yrs { display: none; }
-.hs-mini #minicards .scard.mini .chg { visibility: hidden; }
-.hs-mini #minicards.show-chg .scard.mini .chg { visibility: visible; }
+.hs-mini #minicards .scard.mini .chg { display: none; }
+.hs-mini #minicards.show-chg .scard.mini .chg { display: block; }
+.scard.mini .top .apps { align-items: baseline; margin: 0; }
 .allcard .scard .chg { cursor: help; }
 .scard.mini .chg { font-size: 9.5px; min-height: 0; line-height: 1.25; }
 .hs-explore .cloudhead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 6px; color: #fff; }
@@ -1157,7 +1159,7 @@ function cardMaker(scopes) {
     const pill = status === 'ok' ? '' : `<span class="pill ${status}">${RUN_LABELS[status] || status}</span>`;
     const chg = `Last 30 days: <b>${nf(s.window_added)}</b> new · <b>${nf(s.window_updated)}</b> updated`;
     const own = d3.max(sc.lists.applications_by_year || [], r => +r.value) || 1;
-    const extra = mode ? `<div class="trk"><span>${nf(projects)} projects tracked</span><label class="hfilter" title="Delisted applications were removed from the portal by the system, usually because they were left incomplete. Turn this on to leave them out of every count, chart and table."><input type="checkbox" id="ignoredel"${ignoreDel ? ' checked' : ''}> Ignore delisted</label></div>` : '';
+    const extra = mode ? `<div class="trk">${mode === 'all' ? '' : `<span>${nf(projects)} projects tracked</span>`}<label class="hfilter" title="Delisted applications were removed from the portal by the system, usually because they were left incomplete. Turn this on to leave them out of every count, chart and table."><input type="checkbox" id="ignoredel"${ignoreDel ? ' checked' : ''}> Ignore delisted</label></div>` : '';
     const series = {};
     PIPE.bar.forEach(c => { series[c.id] = new Map((sc.lists[`year_${c.id}`] || []).map(r => [+r.label, +r.value])); });
     const sa = { years, apps: new Map((sc.lists.applications_by_year || []).map(r => [+r.label, +r.value])), series, shared: yMax, own };
