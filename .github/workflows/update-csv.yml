@@ -11,7 +11,7 @@ on:
         required: false
         default: ""
       commit_message:
-        description: "Commit message for the updated CSVs (blank = 'Update CSVs <date>')"
+        description: "Commit message for the updated CSVs (blank = '<Mon D> data sync')"
         required: false
         default: ""
 
@@ -96,5 +96,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add csv
-          git diff --cached --quiet || git commit -m "${COMMIT_MESSAGE:-Update CSVs $(date +%F)}"
+          git diff --cached --quiet || git commit -m "${COMMIT_MESSAGE:-$(date '+%b %-d') data sync}"
           git push
