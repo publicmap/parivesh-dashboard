@@ -17,24 +17,24 @@ all,,All India,stat,,ty_wildlife,3932,,,,,,,,,,
 all,,All India,stat,,ty_crz,1639,,,,,,,,,,
 all,,All India,stat,,ty_other,11965,,,,,,,,,,
 all,,All India,stat,,delisted_or_removed,40855,,,,,,,,,,
-all,,All India,stat,,total_cost_lakhs,13091732100.55,,,,,,,,,,
-all,,All India,stat,,cost_outliers_excluded,2759,,,,,,,,,,
+all,,All India,stat,,total_cost_lakhs,13007135706.09,,,,,,,,,,
+all,,All India,stat,,cost_outliers_excluded,2750,,,,,,,,,,
 all,,All India,stat,,total_land_ha,111606867.0999,,,,,,,,,,
 all,,All India,stat,,latest_application,2026-10-08T11:57:57.346+00:00,,,,,,,,,,
 all,,All India,stat,,latest_grant,2026-10-07T16:52:39.073+00:00,,,,,,,,,,
 all,,All India,stat,,changes_added,498,,,,,,,,,,
 all,,All India,stat,,changes_removed,3,,,,,,,,,,
-all,,All India,stat,,changes_updated,122,,,,,,,,,,
+all,,All India,stat,,changes_updated,160,,,,,,,,,,
 all,,All India,stat,,changes_status,83,,,,,,,,,,
-all,,All India,stat,,compared_with,2026-10-10T01:30:16+05:30,,,,,,,,,,
+all,,All India,stat,,compared_with,2026-10-10T01:45:50+05:30,,,,,,,,,,
 all,,All India,stat,,changes_added_active,492,,,,,,,,,,
 all,,All India,stat,,changes_removed_active,20,,,,,,,,,,
-all,,All India,stat,,changes_updated_active,86,,,,,,,,,,
+all,,All India,stat,,changes_updated_active,120,,,,,,,,,,
 all,,All India,stat,,changes_status_active,57,,,,,,,,,,
 all,,All India,stat,,window_added_active,2129,,,,,,,,,,
-all,,All India,stat,,window_updated_active,1904,,,,,,,,,,
+all,,All India,stat,,window_updated_active,1926,,,,,,,,,,
 all,,All India,stat,,window_added,2129,,,,,,,,,,
-all,,All India,stat,,window_updated,3686,,,,,,,,,,
+all,,All India,stat,,window_updated,3710,,,,,,,,,,
 all,,All India,stat,,window_since,2026-10-01T03:52:08Z,,,,,,,,,,
 all,,All India,status,,EC Granted,56073,,,,,,,,,,
 all,,All India,status,,DELISTED_BY_SYSTEM,37956,,,,,,,,,,
@@ -462,8 +462,8 @@ all,,All India,cube,,2026|withdrawn|B2|other,36,,,,,,,,,,
 all,,All India,cube,,2026|withdrawn|OTHER|crz,27,,,,,,,,,,
 all,,All India,cube,,2026|withdrawn|OTHER|other,35,,,,,,,,,,
 all,,All India,run,,run_status,failed,,,,,,,,,,
-all,,All India,run,,run_date,2026-10-09T20:03:23Z,,,,,,,,,,
-all,,All India,run,,run_url,https://github.com/publicmap/parivesh-dashboard/actions/runs/37984167917,,,,,,,,,,
+all,,All India,run,,run_date,2026-10-09T20:18:22Z,,,,,,,,,,
+all,,All India,run,,run_url,https://github.com/publicmap/parivesh-dashboard/actions/runs/37985863092,,,,,,,,,,
 all,,All India,run,,states_ok,34,,,,,,,,,,
 all,,All India,run,,states_failed,2,,,,,,,,,,
 all,,All India,run,,states_no_data,0,,,,,,,,,,
@@ -7677,24 +7677,24 @@ state,30,Goa,stat,,ty_wildlife,40,,,,,,,,,,
 state,30,Goa,stat,,ty_crz,24,,,,,,,,,,
 state,30,Goa,stat,,ty_other,33,,,,,,,,,,
 state,30,Goa,stat,,delisted_or_removed,79,,,,,,,,,,
-state,30,Goa,stat,,total_cost_lakhs,87020140.69,,,,,,,,,,
-state,30,Goa,stat,,cost_outliers_excluded,9,,,,,,,,,,
+state,30,Goa,stat,,total_cost_lakhs,2423746.23,,,,,,,,,,
+state,30,Goa,stat,,cost_outliers_excluded,0,,,,,,,,,,
 state,30,Goa,stat,,total_land_ha,20743.8471,,,,,,,,,,
 state,30,Goa,stat,,latest_application,2026-10-08T11:57:57.346+00:00,,,,,,,,,,
 state,30,Goa,stat,,latest_grant,2026-09-04T06:05:42.096+00:00,,,,,,,,,,
 state,30,Goa,stat,,changes_added,0,,,,,,,,,,
 state,30,Goa,stat,,changes_removed,0,,,,,,,,,,
-state,30,Goa,stat,,changes_updated,22,,,,,,,,,,
+state,30,Goa,stat,,changes_updated,60,,,,,,,,,,
 state,30,Goa,stat,,changes_status,0,,,,,,,,,,
-state,30,Goa,stat,,compared_with,2026-10-10T01:30:16+05:30,,,,,,,,,,
+state,30,Goa,stat,,compared_with,2026-10-10T01:45:50+05:30,,,,,,,,,,
 state,30,Goa,stat,,changes_added_active,0,,,,,,,,,,
 state,30,Goa,stat,,changes_removed_active,0,,,,,,,,,,
-state,30,Goa,stat,,changes_updated_active,17,,,,,,,,,,
+state,30,Goa,stat,,changes_updated_active,51,,,,,,,,,,
 state,30,Goa,stat,,changes_status_active,0,,,,,,,,,,
 state,30,Goa,stat,,window_added_active,4,,,,,,,,,,
-state,30,Goa,stat,,window_updated_active,113,,,,,,,,,,
+state,30,Goa,stat,,window_updated_active,135,,,,,,,,,,
 state,30,Goa,stat,,window_added,4,,,,,,,,,,
-state,30,Goa,stat,,window_updated,166,,,,,,,,,,
+state,30,Goa,stat,,window_updated,190,,,,,,,,,,
 state,30,Goa,stat,,window_since,2026-08-18T01:35:03+05:30,,,,,,,,,,
 state,30,Goa,status,,EC Granted,120,,,,,,,,,,
 state,30,Goa,status,,DELISTED_BY_SYSTEM,76,,,,,,,,,,
@@ -7855,8 +7855,8 @@ state,30,Goa,cube,,2026|tor|A|ec,2,,,,,,,,,,
 state,30,Goa,cube,,2026|tor|B1|ec,1,,,,,,,,,,
 state,30,Goa,cube,,2026|withdrawn|B2|ec,2,,,,,,,,,,
 state,30,Goa,run,,run_status,ok,,,,,,,,,,
-state,30,Goa,run,,run_date,2026-10-09T20:03:23Z,,,,,,,,,,
-state,30,Goa,run,,run_url,https://github.com/publicmap/parivesh-dashboard/actions/runs/37984167917,,,,,,,,,,
+state,30,Goa,run,,run_date,2026-10-09T20:18:22Z,,,,,,,,,,
+state,30,Goa,run,,run_url,https://github.com/publicmap/parivesh-dashboard/actions/runs/37985863092,,,,,,,,,,
 state,30,Goa,top_recent_ec,1,,,SIA/GA/INFRA2/583812/2026,"Proposed construction of observatory towers and viewing galleries including approaches, decorative lighting, parking for the New Zuari Bridge on NH17/NH66 on Panjim-Mangalore section on DBFOT Mode in the state of Goa",zuari observatory towers limited,North Goa,EC Granted,2026-06-30T12:35:12.099+00:00,2026-09-04T06:05:42.096+00:00,27007.0,5.7,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=1233792440
 state,30,Goa,top_recent_ec,2,,,SIA/GA/INFRA2/564948/2026,"Proposed Expansion of Resort at Survey nos. 129/1,130/1,130/2,130/3,130/4,130/5,130/7,130/11,131/1,132/2,132/3,132/5,132/6 136/1-A, 137/3 at village Arossim, Mormugao Taluka. South Goa, Goa",DAFFODIL HOTELS PRIVATE  LIMITED,South Goa,EC Granted,2026-01-09T09:37:18.248+00:00,2026-09-03T14:37:14.663+00:00,50000.0,7.8506,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=1216384945
 state,30,Goa,top_recent_ec,3,,,SIA/GA/MIN/585198/2026,Block VII Cudnem Mineral Block Iron Ore Mine of Vedanta Iron & Steel Limited,VEDANTA IRON AND STEEL LIMITED,North Goa,EC Granted,2026-07-13T05:31:23.619+00:00,2026-09-03T14:34:08.868+00:00,8500.0,75.3004,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=1235064039
@@ -7867,26 +7867,26 @@ state,30,Goa,top_recent_ec,7,,,IA/GA/CRZ/572023/2026,"Proposed construction of r
 state,30,Goa,top_recent_ec,8,,,IA/GA/CRZ/546611/2025,"Proposed construction of Hotel, Bar, swimming pool, Deck, Spa Compound wall and Gate at plot bearing Survey No. 174/6-A at Morjim, Village in Pernem Taluka, North Goa, Goa.",curti enterprises llp,North Goa,CRZ Granted,2025-07-31T05:20:13.027+00:00,2026-08-19T11:07:20.066+00:00,6300.0,1.7373,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=133117602
 state,30,Goa,top_recent_ec,9,,,IA/GA/CRZ/563149/2025,"Proposed Construction of Hotel, Banquet Hall, Swimming pool and Deck at plot bearing Survey No. 365/2-B and 363/1-A at Benaulim Village, Salcete Taluka, South Goa, Goa.",GOA TOURISM DEVELOPMENT CORPORATION LIMITED,South Goa,CRZ Granted,2025-12-26T06:36:30.395+00:00,2026-08-13T09:48:34.776+00:00,5000.0,0.5563,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=1209391048
 state,30,Goa,top_recent_ec,10,,,SIA/GA/INFRA2/557872/2026,Proposed Construction of Industrial Shed by M/s.Centaur Pharmaceuticals Private Limited,SHIVANAND DATTATRAYA SAWANT,South Goa,EC Granted,2025-11-12T03:58:42.615+00:00,2026-08-06T07:44:40.202+00:00,4230.0,4.23,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=336874378
-state,30,Goa,top_cost,1,,,FP/GA/CommPost/576403/2026,GoI USOF BSNL 4G Saturation Project at Verlem for laying of O/H ADSS OFC,MAHESH NAIR,South Goa,Pending at Nodal Officer for Recommendation,2026-04-20T12:47:37.309+00:00,,6802850.0,0.0026,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=1224948871
-state,30,Goa,top_cost,2,,,WL/GA/OFC/576661/2026,GoI USOF BSNL 4G Saturation Project at Verlem for laying of O/H ADSS OFC,MAHESH NAIR,South Goa,,2026-04-22T13:05:55.767+00:00,,6802850.0,0.0026,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=1225196184
-state,30,Goa,top_cost,3,,,WL/GA/OFC/581294/2026,GoI USOF BSNL 4G Saturation Project at Verlem for laying of O/H ADSS OFC (W/L),MAHESH NAIR,South Goa,,2026-06-05T09:08:30.558+00:00,,6802850.0,0.0026,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=1231086457
-state,30,Goa,top_cost,4,,,SIA/GA/INFRA2/436831/2023,"Proposed Construction of Commercial cum Residential Buildings, Club house and Swimming Pool by M/s. Priority Constructions and Mr. Haroon Ebrahim in property bearing Survey No. 104/1, 104/2(Part), 103/2(Part) and 103/5 of Taleigao Village, Tiswadi Taluka, North Goa, Goa",PRIORITY CONSTRUCTIONS,North Goa,EDS raised,2023-07-15T09:15:48.772+00:00,2023-10-19T11:58:37.780+00:00,4076706.0,1.2758,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=6822694
-state,30,Goa,top_cost,5,,,SIA/GA/INFRA2/526809/2025,"Proposed construction of a Residential Cum Commercial development - ""Priority Magnum"" by M/s. Priority Constructions Pvt. Ltd. and Mr. Haroon Ebrahim on plot bearing Survey No 104/1, 104/2 (Part), 103/2-A, and 103/5, Taleigao Village, Tiswadi Taluka, North Goa.",PRIORITY CONSTRUCTIONS,North Goa,EC Granted,2025-03-01T09:14:01.495+00:00,2025-06-24T07:15:19.099+00:00,4076706.0,1.3268,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=121338565
-state,30,Goa,top_cost,6,,,FP/GA/OTHERS/515063/2024,GOI USOF BSNL 4G Saturation Project at Village Dudal,MAHESH NAIR,South Goa,Final Diversion Order Issued,2024-12-17T17:36:28.304+00:00,2025-08-20T09:02:38.569+00:00,3000000.0,0.031,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=115035866
-state,30,Goa,top_cost,7,,,FP/GA/OTHERS/516084/2024,GOI USOF BSNL 4G Saturation Project at Maulinguem,MAHESH NAIR,South Goa,Pending at State Government for Diversion Letter,2024-12-25T09:34:33.682+00:00,2026-09-10T09:28:21.210+00:00,3000000.0,0.02,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=115793807
-state,30,Goa,top_cost,8,,,WL/GA/Others/516112/2024,GOI USOF BSNL 4G Saturation Project at Maulinguem,MAHESH NAIR,South Goa,,2024-12-25T11:25:09.099+00:00,,3000000.0,0.02,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=115811501
-state,30,Goa,top_cost,9,,,FP/GA/OTHERS/516212/2024,GOI USOF BSNL 4G Saturation Project at Calem (Devnamol),MAHESH NAIR,South Goa,Final Diversion Order Issued,2024-12-26T08:18:05.416+00:00,2025-08-12T10:58:15.150+00:00,3000000.0,0.02,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=115869423
-state,30,Goa,top_cost,10,,,FP/GA/OTHERS/522688/2025,GOI USOF BSNL 4G Saturation Project at Calem Pokarmal,MAHESH NAIR,South Goa,Pending at State Government for Diversion Letter,2025-02-05T17:13:53.105+00:00,2026-09-10T09:33:14.665+00:00,3000000.0,0.02,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=119405646
+state,30,Goa,top_cost,1,,,SIA/GA/INFRA2/506556/2024,"Amendment in Environment Clearance for Construction of Group housing project ""The Bayview"" at survey no. 87/1-A-1,87/1-A-2 & 87/1-A-3 of Village Reis Magos, Taluka Bardez, North Goa, Goa.",DLF EXCLUSIVE FLOORS PRIVATE LIMITED,North Goa,EC Granted,2024-11-19T08:46:00.887+00:00,2025-05-05T09:51:46.243+00:00,94200.0,14.3594,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=111832729
+state,30,Goa,top_cost,2,,,WL/GA/RAIL/539711/2025,Castlerock-Kulem railway doubling in Goa,SOUTH WESTERN RAILWAY,South Goa,,2025-05-30T07:07:59.462+00:00,,92916.0,120.875,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=128589400
+state,30,Goa,top_cost,3,,,IA/GA/IND1/457598/2024,"Proposed expansion in production capacity of Pig Iron Plant from 1 MTPA to 1.2 MTPA by increasing the production capacity of existing BF3 (from 0.65 MTPA to 0.85 MTPA) and sinter plant (from 1 MTPA to 1.2 MTPA) through debottlenecking and Installation of DI pipe Plant from 0.3 MTPA to 0.36 MTPA under clause 7(ii) of EIA Notification 2006 amended from time to time At villages: Amona and Navelim, Taluka: Bicholim, District: North Goa (Goa)",VEDANTA LIMITED  VALUE ADDITION BUSINESS,North Goa,EC Granted,2024-01-03T12:09:14.794+00:00,2024-10-18T03:46:14.031+00:00,80600.0,161.0,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=36266479
+state,30,Goa,top_cost,4,,,SIA/GA/INFRA2/555565/2025,"Environmental Clearance for proposed residential project located on land bearing survey no. 12/1-A, situated at Phase III, Aldeia De Goa, Bambolim Village, Tiswadi, Taluka Goa. by Goan Real Estate and Construction Pvt Ltd",GOAN REAL ESTATE AND CONSTRUCTION PRIVATE LIMITED,North Goa,Proposal pulled back (withdrawn),2025-10-18T07:35:04.675+00:00,,80000.0,1.99,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=138332374
+state,30,Goa,top_cost,5,,,IA/GA/IND2/546260/2025,"Greenfield 2 x 300 KLPD Grain based Ethanol/ENA Plant, 2 x 7.0 MW Co-generation Power plant in both phases & Bottling plant of 870 Bottles/Minute in Phase-1",CENTREAL BIOFUELS LIMITED,North Goa,Standard ToR Granted,2025-07-28T10:01:21.415+00:00,2025-09-08T10:47:13.196+00:00,76338.0,26.2664,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=132931425
+state,30,Goa,top_cost,6,,,IA/GA/IND2/559773/2025,"Greenfield 2 x 300 KLPD Grain based Ethanol/ENA Plant, 2 x 7.0 MW Co-generation Power plant in both phases & Bottling plant of 870 Bottles/Minute in Phase-1",CENTREAL BIOFUELS LIMITED,North Goa,EC Granted,2025-11-27T06:27:11.932+00:00,2026-01-06T09:24:53.485+00:00,76338.0,26.2664,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=629768778
+state,30,Goa,top_cost,7,,,IA/GA/INFRA1/453939/2023,"Proposed Modernization and Expansion of Port Infrastructure for Fishing, Passenger Jetty, Coastal Multipurpose Cargo Berth and Berths for Indian Navy & Indian Coast Guard at Mormugao Port Authority",Mormugao Port Authority,South Goa,ToR Granted,2023-12-01T04:53:27.476+00:00,2024-02-26T07:32:00.619+00:00,62000.0,0.0,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=28385388
+state,30,Goa,top_cost,8,,,SIA/GA/INFRA2/500136/2024,"Proposed Construction of Convention Centre, Exhibition Hall and Management Training Facility  at IPSHEM ONGC Campus, Village Betul, Tehsil Quepem, District – South Goa, Goa",AMIT RANJAN MISRA,South Goa,EC Granted,2024-10-07T12:32:15.710+00:00,2024-10-25T12:48:54.660+00:00,52388.0,10.83,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=109056414
+state,30,Goa,top_cost,9,,,IA/GA/CRZ/545859/2025,"Proposed Expansion of Resort at Survey nos. 129/1,130/1,130/2,130/3,130/4,130/5,130/7,130/11,131/1,132/2,132/3,132/5,132/6 136/1-A, 137/3 at village Arossim, Mormugao Taluka. South Goa, Goa",DAFFODIL HOTELS PRIVATE  LIMITED,South Goa,ADS Raised,2025-07-24T11:22:06.636+00:00,,50000.0,7.8506,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=132725482
+state,30,Goa,top_cost,10,,,IA/GA/MIN/552475/2025,"Codli Mineral Block - XII, Auctioned Block Area: 377.0881 ha with Iron Ore production 3.50 Million TPA, OB/Waste 8.21 Million TPA (Total Excavation: 11.71 Million TPA) along with Installation 04 Crusher (3 Primary Crusher of 1 x 250 TPH & 2 x 90 TPH and 1 Secondary Crusher of 150 TPH) and 600 TPH Dry & 2 x 300 TPH Wet Beneficiation Plant with Throughput Capacity 3.50 Million TPA located at Village: Codli, Taluka: Dharbandora, District: South Goa (Goa) by JSW Steel Limited.",JSW STEEL LTD,South Goa,Proposal returned in present form,2025-09-21T03:24:16.146+00:00,,50000.0,377.0881,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=136690198
 state,30,Goa,top_land,1,,,IA/GA/CRZ/417439/2023,Boutique Hotel project,HERMITAGE BUILDERS PRIVATE LIMITED,South Goa,,2023-02-08T08:18:56.502+00:00,,700.0,12271.0,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=2944697
 state,30,Goa,top_land,2,,,IA/GA/MIN/422323/2023,Block 1- Bicholim Mineral Block for Iron Ore,VEDANTA LIMITED,North Goa,ToR Granted,2023-03-16T05:45:26.300+00:00,2023-06-16T11:05:48.940+00:00,25000.0,478.5206,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=3996409
 state,30,Goa,top_land,3,,,IA/GA/MIN/442593/2023,Block 1- Bicholim Mineral Block for Iron Ore,VEDANTA LIMITED,North Goa,EC Granted,2023-08-31T12:55:47.849+00:00,2024-01-23T11:57:41.431+00:00,25000.0,478.5206,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=8886191
-state,30,Goa,top_land,4,,,IA/GA/MIN/583503/2026,Block 1- Bicholim Mineral Block for Iron Ore,VEDANTA LIMITED,North Goa,Forwarded to MS,2023-08-31T12:55:47.849+00:00,2024-01-23T11:57:41.431+00:00,0.25,478.5206,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=1233463585
+state,30,Goa,top_land,4,,,IA/GA/MIN/583503/2026,Block 1- Bicholim Mineral Block for Iron Ore,VEDANTA LIMITED,North Goa,Forwarded to MS,2023-08-31T12:55:47.849+00:00,2024-01-23T11:57:41.431+00:00,25000.0,478.5206,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=1233463585
 state,30,Goa,top_land,5,,,IA/GA/MIN/552475/2025,"Codli Mineral Block - XII, Auctioned Block Area: 377.0881 ha with Iron Ore production 3.50 Million TPA, OB/Waste 8.21 Million TPA (Total Excavation: 11.71 Million TPA) along with Installation 04 Crusher (3 Primary Crusher of 1 x 250 TPH & 2 x 90 TPH and 1 Secondary Crusher of 150 TPH) and 600 TPH Dry & 2 x 300 TPH Wet Beneficiation Plant with Throughput Capacity 3.50 Million TPA located at Village: Codli, Taluka: Dharbandora, District: South Goa (Goa) by JSW Steel Limited.",JSW STEEL LTD,South Goa,Proposal returned in present form,2025-09-21T03:24:16.146+00:00,,50000.0,377.0881,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=136690198
 state,30,Goa,top_land,6,,,FP/GA/MIN/QRY/569926/2026,"Application for approval of forest land for non forest purpose under clause (ii) of subsection (1) under section 2 of the Van (Sanrakshan Evam Samvardhan) Adhiniyam, 1980 in respect of “ Block-XII Codli Mineral Block by M/s JSW Steel Ltd under south Goa Division/District of Goa.",JSW STEEL LTD,South Goa,Pending at MS for Acceptance in PSC-I,2026-02-21T05:34:55.035+00:00,,5000.0,377.0881,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=1219925420
 state,30,Goa,top_land,7,,,IA/GA/MIN/571910/2026,Block-XII Codli Mineral Block,JSW STEEL LTD,South Goa,ToR Granted,2026-03-10T11:37:03.329+00:00,2026-05-18T05:00:53.198+00:00,50000.0,377.0881,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=1221407043
 state,30,Goa,top_land,8,,,FP/GA/TRANS/401431/2022,Construction of 400 kV D/C Xeldem - Mapusa transmission line & Xeldem- Xeldem (Existing) 220 kV HTLS D/C transmission Line,GOA TAMNAR TRANSMISSION PROJECT LIMITED,NORTH GOA,Final Diversion Order Issued,2022-09-26T12:08:33.715+00:00,2026-04-06T09:01:40.995+00:00,22700.0,319.828,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=917415
-state,30,Goa,top_land,9,,,IA/GA/CRZ/457706/2024,Re Construction of Existing House,WILLIAM GOMES,North Goa,Under Examination with SCZMA,2024-01-04T11:13:36.022+00:00,,2300000.0,300.0,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=36528032
-state,30,Goa,top_land,10,,,IA/GA/MIN/471378/2024,Block IX Surla Sonshi Mineral Block,JSW STEEL LTD,North Goa,ToR Granted,2024-05-02T10:29:39.867+00:00,2025-09-14T19:10:22.722+00:00,0.2,254.51,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=65053241
+state,30,Goa,top_land,9,,,IA/GA/CRZ/457706/2024,Re Construction of Existing House,WILLIAM GOMES,North Goa,Under Examination with SCZMA,2024-01-04T11:13:36.022+00:00,,23.0,300.0,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=36528032
+state,30,Goa,top_land,10,,,IA/GA/MIN/471378/2024,Block IX Surla Sonshi Mineral Block,JSW STEEL LTD,North Goa,ToR Granted,2024-05-02T10:29:39.867+00:00,2025-09-14T19:10:22.722+00:00,20000.0,254.51,https://parivesh.nic.in/newupgrade/#/report/ec?proposalId=65053241
 state,31,Lakshadweep,stat,,projects,45,,,,,,,,,,
 state,31,Lakshadweep,stat,,active_projects,44,,,,,,,,,,
 state,31,Lakshadweep,stat,,applications,44,,,,,,,,,,
