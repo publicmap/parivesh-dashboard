@@ -906,17 +906,22 @@ function renderTable(opts = {}) {
   st.page = Math.min(st.page, pages - 1);
   const slice = st.shown.slice(st.page * PAGE_SIZE, (st.page + 1) * PAGE_SIZE);
   const sort = st.sort || DEFAULT_SORT;
-  const head = `<tr><th style="width:22px"></th><th data-sort="${PROGRESS}" class="${sort.f === PROGRESS ? 'sorted' + (sort.dir < 0 ? ' desc' : '') : ''}">Progress</th>${st.cols.map(f => `<th data-sort="${esc(f)}" class="${sort.f === f ? 'sorted' + (sort.dir < 0 ? ' desc' : '') : ''}">${esc(f)}</th>`).join('')}</tr>
-    <tr class="filters"><th></th><th>${progFilterHtml()}</th>${st.cols.map(f => `<th><input type="search" data-cf="${esc(f)}" placeholder="Filter" value="${esc(st.colFilters[f] || '')}"></th>`).join('')}</tr>`;
+  const lead = st.cols.includes(CLEARANCE_DAYS) ? CLEARANCE_DAYS : null;
+  const rest = st.cols.filter(f => f !== lead);
+  const thCell = f => `<th data-sort="${esc(f)}" class="${sort.f === f ? 'sorted' + (sort.dir < 0 ? ' desc' : '') : ''}">${esc(f)}</th>`;
+  const fCell = f => `<th><input type="search" data-cf="${esc(f)}" placeholder="Filter" value="${esc(st.colFilters[f] || '')}"></th>`;
+  const head = `<tr><th style="width:22px"></th>${lead ? thCell(lead) : ''}<th data-sort="${PROGRESS}" class="${sort.f === PROGRESS ? 'sorted' + (sort.dir < 0 ? ' desc' : '') : ''}">Progress</th>${rest.map(thCell).join('')}</tr>
+    <tr class="filters"><th></th>${lead ? fCell(lead) : ''}<th>${progFilterHtml()}</th>${rest.map(fCell).join('')}</tr>`;
   const body = slice.map(it => {
     const k = `${it.type}:${it.id}`;
     const open = st.expanded.has(k);
-    const tds = st.cols.map(f => {
+    const cell = f => {
       const gl = GLOSSARY_COLS.includes(f) && glossary[f]?.get(glKey(it.row[f]));
       return `<td class="${it.changeMap?.[f] ? 'chg' : ''}${gl ? ' gl' : ''}"${gl ? ` data-gl="${esc(gl.meaning)}" data-glv="${esc(it.row[f] || '(blank)')}"` : ` title="${esc(it.row[f])}"`}>${cellHtml(it, f)}</td>`;
-    }).join('');
+    };
+    const tds = rest.map(cell).join('');
     const detail = open ? `<tr class="detail"><td colspan="${st.cols.length + 2}">${detailHtml(it)}</td></tr>` : '';
-    return `<tr class="item ${it.type}" data-key="${esc(k)}"><td class="mark">${MARKS[it.type]}</td><td class="prog">${progressHtml(it.row[STATUS_FIELD])}</td>${tds}</tr>${detail}`;
+    return `<tr class="item ${it.type}" data-key="${esc(k)}"><td class="mark">${MARKS[it.type]}</td>${lead ? cell(lead) : ''}<td class="prog">${progressHtml(it.row[STATUS_FIELD])}</td>${tds}</tr>${detail}`;
   }).join('');
   $('tbl').innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
   $('tablewrap').hidden = !slice.length;
@@ -925,6 +930,7 @@ function renderTable(opts = {}) {
   if (!slice.length) $('status').textContent = diffMode && hasChanges() ? 'No rows with the selected changes match the current filters.' : 'No rows match the current filters.';
   if (!opts.preview || opts.explore) renderExplore();
   if (opts.preview) renderContext(); else renderLockBar();
+  if (!opts.preview) syncHash();
   $('pager').innerHTML = pages > 1
     ? `<button id="prevp" ${st.page === 0 ? 'disabled' : ''}>‹</button> Page ${st.page + 1} of ${pages} · ${st.shown.length} rows <button id="nextp" ${st.page >= pages - 1 ? 'disabled' : ''}>›</button>`
     : (slice.length ? `${st.shown.length} rows` : '');
@@ -943,9 +949,45 @@ function setStatus(text, err) {
   $('pager').innerHTML = '';
 }
 
+let pendingHash = null;
+const LOCK_KEYS = ['st', 'pc', 'ty', 'year'];
+
 function syncHash() {
+  if (!st.code) return;
   const sha = st.commits[st.idx]?.sha.slice(0, 7);
-  history.replaceState(null, '', `#s=${st.code}${sha && st.idx > 0 ? `&v=${sha}` : ''}`);
+  const p = new URLSearchParams({ s: st.code });
+  if (sha && st.idx > 0) p.set('v', sha);
+  if (st.cur) {
+    const q = $('q').value.trim();
+    if (q) p.set('q', q);
+    for (const [f, v] of Object.entries(st.colFilters)) if (v && v.trim()) p.set(`f.${f}`, v);
+    for (const k of LOCK_KEYS) if (lock[k] != null) p.set(`l.${k}`, lock[k]);
+    if (st.expanded.size) p.set('r', [...st.expanded].join(','));
+  }
+  history.replaceState(null, '', `#${p}`);
+}
+
+function restoreFromHash(h) {
+  if (h.get('q')) $('q').value = h.get('q');
+  for (const [k, v] of h) {
+    if (k.startsWith('f.')) {
+      const f = k.slice(2);
+      st.colFilters[f] = v;
+      if (st.cur.fields.includes(f) && !st.cols.includes(f)) st.cols.push(f);
+    } else if (k.startsWith('l.') && LOCK_KEYS.includes(k.slice(2))) {
+      lock[k.slice(2)] = k === 'l.year' ? Number(v) : v;
+    }
+  }
+  if (h.get('r')) h.get('r').split(',').forEach(k => st.expanded.add(k));
+}
+
+function revealExpanded() {
+  const first = [...st.expanded][0];
+  const i = first ? st.shown.findIndex(it => `${it.type}:${it.id}` === first) : -1;
+  if (i < 0) return;
+  st.page = Math.floor(i / PAGE_SIZE);
+  renderTable();
+  document.querySelector(`tr.item[data-key="${CSS.escape(first)}"]`)?.scrollIntoView({ block: 'center' });
 }
 
 async function showVersion() {
@@ -970,9 +1012,16 @@ async function showVersion() {
     if (!st.cols.length) st.cols = fc.fields.slice(0, 8);
     $('rawcsv').href = `https://github.com/${REPO}/blob/${commit.sha}/${csvPath(st.code)}`;
     $('controls').hidden = false;
+    const restore = pendingHash;
+    pendingHash = null;
+    if (restore) restoreFromHash(restore);
     renderColPicker();
     renderSummary();
     renderTable();
+    if (restore) {
+      if (LOCK_KEYS.some(k => lock[k] != null)) syncViews();
+      revealExpanded();
+    }
     const grand = st.commits[st.idx + 2];
     if (grand) loadCsv(grand.sha, st.code).catch(() => {});
   } catch (e) {
@@ -1952,6 +2001,7 @@ document.addEventListener('keydown', e => {
 
 const hash = new URLSearchParams(location.hash.slice(1));
 if (STATES[hash.get('s')]) {
+  pendingHash = hash;
   $('state').value = hash.get('s');
   selectState(hash.get('s'), hash.get('v'));
 } else {
