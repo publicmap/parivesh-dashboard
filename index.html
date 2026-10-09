@@ -159,6 +159,7 @@ a { color: var(--accent); }
 .chiplabel { align-self: center; font-size: 12px; opacity: .7; margin-right: 2px; }
 .chip { border-radius: 999px; padding: 3px 12px; border: 1px solid var(--border); background: var(--panel); cursor: pointer; font-size: 13px; }
 .chip.on { outline: 2px solid var(--accent); }
+.chip[data-filter]:not(.on) { opacity: .5; }
 .chip.added { background: var(--add-bg); color: var(--add-fg); }
 .chip.removed { background: var(--del-bg); color: var(--del-fg); }
 .chip.updated { background: var(--upd-bg); color: var(--upd-fg); }
@@ -396,7 +397,7 @@ td.prog { width: 1%; white-space: nowrap; }
   <section id="viewer" hidden>
   <div class="bar" id="controls" hidden>
     <input type="search" id="q" placeholder="Search rows…" size="28">
-    <button type="button" id="verbtn" class="verbtn" aria-expanded="false" aria-controls="verpanel" title="Compare with earlier snapshots of this state's data"></button>
+    <button type="button" id="verbtn" class="verbtn" aria-expanded="false" aria-controls="verpanel" title="Compare with earlier snapshots of this state's data">Show Changes</button>
     <span class="spacer"></span>
     <a id="rawcsv" target="_blank" rel="noopener" title="This version's CSV file on GitHub">Raw CSV on GitHub</a>
     <button id="allcols">Show all columns</button>
@@ -408,7 +409,6 @@ td.prog { width: 1%; white-space: nowrap; }
       <button id="older" title="Older version (←)">‹ Older</button>
       <select id="version" class="version"></select>
       <button id="newer" title="Newer version (→)">Newer ›</button>
-      <label class="inline" id="onlychg-wrap" hidden><input type="checkbox" id="onlychg"> Filter by data change (CSV diff)</label>
     </div>
     <p class="meta" id="meta"></p>
     <div class="chips" id="chips"></div>
@@ -479,7 +479,7 @@ const MAP_LAYERS = ['jammu-and-kashmir', 'himachal-pradesh', 'punjab', 'chandiga
 const MARKS = { added: '+', removed: '−', updated: '~', same: '' };
 
 const $ = id => document.getElementById(id);
-const st = { code: null, commits: [], idx: 0, cur: null, diff: null, items: [], shown: [], cols: [], filter: 'all', transition: null, sort: null, page: 0, expanded: new Set(), tok: 0, dashTok: 0, colFilters: {} };
+const st = { code: null, commits: [], idx: 0, cur: null, diff: null, items: [], shown: [], cols: [], filter: new Set(['added', 'updated', 'removed']), transition: null, sort: null, page: 0, expanded: new Set(), tok: 0, dashTok: 0, colFilters: {} };
 const csvCache = new Map();
 const GLOSSARY_COLS = ['Proposal Type', 'Last Visible Status', 'Category', 'Project Category (Code)', 'Description'];
 const glossary = {};
@@ -716,6 +716,7 @@ function hasChanges() {
   return st.diff.hasPrev && c.added + c.updated + c.removed > 0;
 }
 
+const defaultChanges = () => new Set(['added', 'updated', 'removed']);
 let prevCol = null, diffMode = false;
 const previewing = () => !!(prevF.st || prevF.pc || prevF.ty || hoverYear != null || prevCol);
 function filterItems(skipCol) {
@@ -726,11 +727,10 @@ function filterItems(skipCol) {
   }
   const cf = Object.entries(colMap).filter(([c, v]) => v && c !== skipCol);
   const terms = qTerms();
-  const showAll = !diffMode || !hasChanges() || !$('onlychg').checked;
+  const byChange = diffMode && hasChanges();
   return st.items.filter(it => {
     if (!diffMode && it.type === 'removed') return false;
-    if (!showAll && it.type === 'same') return false;
-    if (st.filter !== 'all' && it.type !== st.filter) return false;
+    if (byChange && !st.filter.has(it.type)) return false;
     if (st.transition && it.transition !== st.transition) return false;
     if (f.st && classify(it.row[STATUS_FIELD])?.cat.id !== f.st) return false;
     if (f.pc && pcCode(it.row['Project Category (Code)']) !== f.pc) return false;
@@ -770,8 +770,6 @@ function renderNav() {
     `<option value="${i}"${i === st.idx ? ' selected' : ''}>${fmtDate(c.date)} · ${esc(c.msg)} · ${c.sha.slice(0, 7)}${i === 0 ? ' (latest)' : ''}</option>`).join('');
   $('older').disabled = st.idx >= st.commits.length - 1;
   $('newer').disabled = st.idx <= 0;
-  const c = st.commits[st.idx];
-  $('verbtn').textContent = `Version: ${st.idx === 0 ? 'Latest' : 'Older'} · ${fmtDate(c.date)} · ${c.sha.slice(0, 7)}`;
 }
 function setDiffMode(on) {
   diffMode = on;
@@ -780,10 +778,9 @@ function setDiffMode(on) {
   $('viewer').classList.toggle('diffmode', on);
   if (!st.cur) return;
   if (!on && st.idx !== 0) { st.idx = 0; showVersion(); return; }
-  st.filter = 'all';
+  st.filter = defaultChanges();
   st.transition = null;
   st.page = 0;
-  $('onlychg').checked = on && hasChanges();
   renderSummary();
   renderTable();
 }
@@ -791,9 +788,9 @@ $('verbtn').addEventListener('click', () => setDiffMode(!diffMode));
 
 function renderSummary() {
   const c = counts(), d = st.diff;
-  const chip = (key, label, n) => `<button class="chip ${key}${st.filter === key ? ' on' : ''}" data-filter="${key}">${label} ${n}</button>`;
+  const chip = (key, label, n) => `<button class="chip ${key}${st.filter.has(key) ? ' on' : ''}" data-filter="${key}" aria-pressed="${st.filter.has(key)}">${label} ${n}</button>`;
   $('chips').innerHTML = d.hasPrev
-    ? '<span class="chiplabel">Filter by data change:</span>' + chip('all', 'All', st.items.length) + chip('added', '+ Added', c.added) + chip('updated', '~ Updated', c.updated) + chip('removed', '− Removed', c.removed)
+    ? '<span class="chiplabel">Show rows:</span>' + chip('same', 'No Changes', c.same) + chip('added', '+ Added', c.added) + chip('updated', '~ Updated', c.updated) + chip('removed', '− Removed', c.removed)
     : '';
   const tally = {};
   st.items.forEach(i => { if (i.transition) tally[i.transition] = (tally[i.transition] || 0) + 1; });
@@ -866,7 +863,6 @@ function activeFilters() {
   const q = $('q').value.trim();
   if (q) parts.push(`search “${q}”`);
   for (const [f, v] of Object.entries(st.colFilters)) if (v.trim()) parts.push(`${f}: ${f === PROGRESS ? progLabel(v) : v.trim()}`);
-  if (st.filter !== 'all') parts.push(st.filter);
   if (st.transition) parts.push(st.transition);
   return parts;
 }
@@ -874,10 +870,9 @@ function activeFilters() {
 function resetFilters() {
   $('q').value = '';
   st.colFilters = {};
-  st.filter = 'all';
+  st.filter = defaultChanges();
   st.transition = null;
   st.page = 0;
-  $('onlychg').checked = diffMode && hasChanges();
   renderSummary();
   renderTable();
 }
@@ -927,7 +922,7 @@ function renderTable(opts = {}) {
   $('tablewrap').hidden = !slice.length;
   setWrapWidth();
   $('status').hidden = !!slice.length;
-  if (!slice.length) $('status').textContent = hasChanges() && $('onlychg').checked ? 'No changed rows match the current filters.' : 'No rows match the current filters.';
+  if (!slice.length) $('status').textContent = diffMode && hasChanges() ? 'No rows with the selected changes match the current filters.' : 'No rows match the current filters.';
   if (!opts.preview || opts.explore) renderExplore();
   if (opts.preview) renderContext(); else renderLockBar();
   $('pager').innerHTML = pages > 1
@@ -967,12 +962,10 @@ async function showVersion() {
     st.cur = fc;
     st.diff = computeDiff(fc, fp);
     st.items = buildItems();
-    st.filter = 'all';
+    st.filter = defaultChanges();
     st.transition = null;
     st.page = 0;
     st.expanded.clear();
-    $('onlychg-wrap').hidden = !hasChanges();
-    $('onlychg').checked = diffMode && hasChanges();
     st.cols = DEFAULT_COLS.filter(f => fc.fields.includes(f));
     if (!st.cols.length) st.cols = fc.fields.slice(0, 8);
     $('rawcsv').href = `https://github.com/${REPO}/blob/${commit.sha}/${csvPath(st.code)}`;
@@ -1885,7 +1878,6 @@ $('exlist').addEventListener('click', e => {
   st.page = 0;
   renderTable();
 });
-$('onlychg').addEventListener('change', () => { st.page = 0; renderTable(); });
 $('colpick').addEventListener('change', () => {
   st.cols = [...$('colpick').querySelectorAll('input:checked')].map(i => i.value);
   renderTable();
@@ -1906,7 +1898,8 @@ $('dlcsv').addEventListener('click', () => {
 $('chips').addEventListener('click', e => {
   const b = e.target.closest('[data-filter]');
   if (!b) return;
-  st.filter = b.dataset.filter;
+  const k = b.dataset.filter;
+  st.filter.has(k) ? st.filter.delete(k) : st.filter.add(k);
   st.page = 0;
   renderSummary();
   renderTable();

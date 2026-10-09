@@ -4,6 +4,7 @@ import polars as pl
 import sys
 import xml.etree.ElementTree as ET
 from typing import Dict, Any, Union
+from cost_units import normalize_cost_lakhs
 
 def get_directory_path(state: str = None) -> str:
     """Get the appropriate directory path based on state parameter."""
@@ -268,6 +269,10 @@ def extract_values(data: Dict[str, Any]) -> Dict[str, Any]:
         value = safe_get(data, *keys)
         if value is not None:
             results[field] = value
+
+    if 'Total Cost (Lakhs)' in results:
+        cost_text = safe_get(data, 'data', 'proponentApplications', 'projectDetailDto', 'commonFormDetails', 0, 'cafProjectActivityCost', 'total_cost_text')
+        results['Total Cost (Lakhs)'] = normalize_cost_lakhs(results['Total Cost (Lakhs)'], cost_text)
 
     # Extract KML URLs
     kml_urls = extract_kml_urls(data)
