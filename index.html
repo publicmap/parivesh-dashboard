@@ -170,8 +170,8 @@ details.cols label { display: block; padding: 2px 0; }
 .wrap { overflow: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; max-height: 70vh; }
 table { border-collapse: collapse; width: 100%; }
 th, td { padding: 6px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-thead tr:first-child th { height: 48px; line-height: 1.2; white-space: normal; overflow: hidden; vertical-align: middle; }
-thead tr.filters th { top: 48px; cursor: default; padding: 3px 6px; font-weight: 400; }
+thead tr:first-child th { line-height: 1.2; white-space: normal; overflow: hidden; vertical-align: middle; }
+thead tr.filters th { top: var(--hh, 48px); cursor: default; padding: 3px 6px; font-weight: 400; }
 thead tr.filters input, thead tr.filters select { width: 100%; min-width: 40px; padding: 2px 6px; font-size: 12px; }
 th { position: sticky; top: 0; background: var(--panel); cursor: pointer; user-select: none; z-index: 1; }
 th.sorted::after { content: " ▲"; font-size: 10px; }
@@ -892,6 +892,8 @@ function renderFilterBar() {
 function setWrapWidth() {
   const w = $('tablewrap').clientWidth;
   if (w) $('tablewrap').style.setProperty('--wrapw', `${w}px`);
+  const h = $('tbl').querySelector('thead tr')?.getBoundingClientRect().height;
+  if (h) $('tablewrap').style.setProperty('--hh', `${Math.round(h)}px`);
 }
 window.addEventListener('resize', setWrapWidth);
 
