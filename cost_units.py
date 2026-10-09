@@ -5,13 +5,14 @@ ONES = {w: i for i, w in enumerate(
 TENS = {w: 10 * i for i, w in enumerate('_ _ twenty thirty forty fifty sixty seventy eighty ninety'.split()) if w != '_'}
 SCALES = {'lakh': 1e5, 'lakhs': 1e5, 'lac': 1e5, 'lacs': 1e5, 'crore': 1e7, 'crores': 1e7, 'cr': 1e7}
 TOKEN = re.compile(r'\d+(?:\.\d+)?|[a-z]+')
+UNIT_LABEL = re.compile(r'\b(?:lakhs?|lacs?|crores?)\s*\(s\)')
 
 
 def text_to_lakhs(text):
     if not text:
         return None
     total, group, current, seen, point = 0.0, 0.0, 0.0, False, None
-    for tok in TOKEN.findall(str(text).lower()):
+    for tok in TOKEN.findall(UNIT_LABEL.sub(' ', str(text).lower())):
         if tok == 'point':
             point = ''
         elif point is not None and tok in ONES and ONES[tok] < 10:

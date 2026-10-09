@@ -115,9 +115,8 @@ header h1 a.home:hover { text-decoration: underline; }
 .verbtn::after { content: ' ▾'; }
 .verbtn[aria-expanded=true]::after { content: ' ▴'; }
 .verbtn[aria-expanded=true] { border-color: var(--accent); color: var(--accent); }
-.verpanel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; }
+.verpanel { margin: 0; }
 .verpanel[hidden] { display: none; }
-.verpanel .bar { margin-bottom: 4px; }
 #viewer:not(.diffmode) #tbl tr:not(.detail) > :first-child { display: none; }
 #viewer:not(.diffmode) tr.added td, #viewer:not(.diffmode) tr.updated td { background: transparent; }
 #viewer:not(.diffmode) td.chg { background: transparent; }
@@ -153,9 +152,12 @@ button:disabled { opacity: .4; cursor: default; }
 a { color: var(--accent); }
 .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
 .bar .spacer { flex: 1; }
-.version { flex: 1 1 320px; min-width: 0; }
-.meta { color: var(--muted); font-size: 12px; margin: 0 0 12px; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.version { max-width: 360px; min-width: 0; }
+#nav { display: none; flex-direction: column; align-items: flex-start; gap: 8px; flex: 1 1 360px; min-width: 0; }
+#viewer.diffmode #nav { display: flex; }
+#nav .navrow { display: flex; align-items: center; gap: 8px; }
+#controls { align-items: flex-start; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
 .chiplabel { align-self: center; font-size: 12px; opacity: .7; margin-right: 2px; }
 .chip { border-radius: 999px; padding: 3px 12px; border: 1px solid var(--border); background: var(--panel); cursor: pointer; font-size: 13px; }
 .chip.on { outline: 2px solid var(--accent); }
@@ -163,10 +165,23 @@ a { color: var(--accent); }
 .chip.added { background: var(--add-bg); color: var(--add-fg); }
 .chip.removed { background: var(--del-bg); color: var(--del-fg); }
 .chip.updated { background: var(--upd-bg); color: var(--upd-fg); }
-.chip.trans { font-size: 12px; background: var(--accent-soft); }
+.chips[hidden] { display: none; }
+.transwrap { max-height: 220px; overflow: auto; display: inline-block; max-width: 100%; border: 1px solid var(--border); border-radius: 6px; background: var(--upd-bg); color: var(--upd-fg); }
+.transtbl { width: auto; font-size: 12px; }
+.transtbl th, .transtbl td { max-width: 360px; padding: 3px 10px; border-bottom: 1px solid var(--border); }
+.transtbl thead th { position: sticky; top: 0; background: var(--upd-bg); cursor: default; }
+.transtbl thead tr:first-child th { text-align: left; }
+.transtbl tbody tr { cursor: pointer; }
+.transtbl tbody tr:hover, .transtbl tbody tr.on { background: rgba(0,0,0,.08); }
+.transtbl tbody tr.on { outline: 2px solid var(--accent); outline-offset: -2px; }
+.transtbl td.n { text-align: right; font-variant-numeric: tabular-nums; }
+.transtbl td.arrow { padding: 3px 2px; font-weight: 700; }
 label.inline { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
 details.cols { position: relative; }
 details.cols > div { position: absolute; right: 0; z-index: 5; max-height: 320px; overflow: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 8px; width: 280px; margin-top: 4px; }
+details.cols .colbtns { display: flex; gap: 6px; margin-bottom: 6px; }
+details.dl > div { width: max-content; display: flex; flex-direction: column; gap: 6px; }
+details.dl a { padding: 2px 4px; }
 details.cols label { display: block; padding: 2px 0; }
 .wrap { overflow: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; max-height: 70vh; }
 table { border-collapse: collapse; width: 100%; }
@@ -398,21 +413,23 @@ td.prog { width: 1%; white-space: nowrap; }
   <div class="bar" id="controls" hidden>
     <input type="search" id="q" placeholder="Search rows…" size="28">
     <button type="button" id="verbtn" class="verbtn" aria-expanded="false" aria-controls="verpanel" title="Compare with earlier snapshots of this state's data">Show Changes</button>
-    <span class="spacer"></span>
-    <a id="rawcsv" target="_blank" rel="noopener" title="This version's CSV file on GitHub">Raw CSV on GitHub</a>
-    <button id="allcols">Show all columns</button>
-    <button id="dlcsv" title="Downloads the rows and columns currently shown">Download CSV</button>
-    <details class="cols"><summary>Columns</summary><div id="colpick"></div></details>
-  </div>
-  <div class="verpanel" id="verpanel" hidden>
-    <div class="bar" id="nav" hidden>
-      <button id="older" title="Older version (←)">‹ Older</button>
-      <select id="version" class="version"></select>
-      <button id="newer" title="Newer version (→)">Newer ›</button>
+    <div id="nav">
+      <div class="navrow">
+        <button id="older" title="Older version (←)">‹ Older</button>
+        <button id="newer" title="Newer version (→)">Newer ›</button>
+        <select id="version" class="version" aria-label="Version"></select>
+      </div>
+      <div class="verpanel" id="verpanel" hidden>
+        <div class="chips" id="chips"></div>
+        <div class="chips" id="trans"></div>
+      </div>
     </div>
-    <p class="meta" id="meta"></p>
-    <div class="chips" id="chips"></div>
-    <div class="chips" id="trans"></div>
+    <span class="spacer"></span>
+    <details class="cols dl" id="dl"><summary>Download CSV</summary><div>
+      <button type="button" id="dlcsv" title="Downloads the rows and columns currently shown">Filtered Table</button>
+      <a id="rawcsv" target="_blank" rel="noopener" title="This version's full CSV file on GitHub"></a>
+    </div></details>
+    <details class="cols"><summary>Columns</summary><div id="colpick"></div></details>
   </div>
   <div class="filterbar" id="filterbar" hidden></div>
   <div id="status" class="msg">Select a state to begin.</div>
@@ -427,11 +444,11 @@ td.prog { width: 1%; white-space: nowrap; }
 <script>
 $('header').photoBackdrop({
   photos: [{
-    src: 'https://commons.wikimedia.org/wiki/Special:FilePath/RANTHAMBORE_TIGER_RESERVE.jpg?width=1920',
-    title: 'A tiger attacking a Sambar deer in Ranthambore National Park',
-    author: 'Harsh.kabra.98',
-    license: 'CC BY-SA',
-    url: 'https://en.wikipedia.org/wiki/Bengal_tiger#/media/File:RANTHAMBORE_TIGER_RESERVE.jpg'
+    src: 'https://commons.wikimedia.org/wiki/Special:FilePath/The_Powerful_Yawn_of_a_Bengal_Tiger_at_Ranthambore_national_park.jpg?width=1920',
+    title: 'The Powerful Yawn of a Bengal Tiger at Ranthambore national park',
+    author: 'Rohit Sharma',
+    license: 'CC BY-SA 4.0',
+    url: 'https://commons.wikimedia.org/wiki/File:The_Powerful_Yawn_of_a_Bengal_Tiger_at_Ranthambore_national_park.jpg'
   }],
   galleries: ['https://commons.wikimedia.org/wiki/Category:Quality_images_from_Wiki_Loves_Earth_2026_in_India']
 });
@@ -442,11 +459,12 @@ $('header').photoBackdrop({
 const REPO = 'publicmap/parivesh-dashboard';
 const PAGE_SIZE = 100;
 const STATUS_FIELD = 'Last Visible Status';
-let ignoreDel = true;
+let ignoreDel = true, diffIgnoreDel = false;
 try { ignoreDel = localStorage.getItem('ignoreDelisted') !== '0'; } catch (e) {}
 const isDelisted = status => classify(status)?.cat.id === 'delisted';
+const skipDelisted = () => diffMode ? diffIgnoreDel : ignoreDel;
 function withoutDelisted(data) {
-  if (!ignoreDel || !data) return data;
+  if (!skipDelisted() || !data) return data;
   const rows = new Map();
   for (const [id, row] of data.rows) if (!isDelisted(row[STATUS_FIELD])) rows.set(id, row);
   return { ...data, rows };
@@ -457,7 +475,7 @@ function clearanceDays(applied, granted) {
   const a = Date.parse(applied), g = granted ? Date.parse(granted) : Date.now();
   return isNaN(a) || isNaN(g) ? '' : String(Math.max(0, Math.round((g - a) / 864e5)));
 }
-const DEFAULT_COLS = [STATUS_FIELD, CLEARANCE_DAYS, 'Proposal Number', 'Project Name', 'Total Cost (Lakhs)', 'Organization Name', MAP_FIELD, 'District', 'Proposal Type', 'Application Date', 'Grant Date'];
+const DEFAULT_COLS = [STATUS_FIELD, CLEARANCE_DAYS, 'Proposal Number', MAP_FIELD, 'Project Name', 'Total Cost (Lakhs)', 'Organization Name', 'District', 'Proposal Type', 'Application Date', 'Grant Date'];
 const STATES = {
   1: 'Jammu And Kashmir', 2: 'Himachal Pradesh', 3: 'Punjab', 4: 'Chandigarh', 5: 'Uttarakhand', 6: 'Haryana', 7: 'Delhi',
   8: 'Rajasthan', 9: 'Uttar Pradesh', 10: 'Bihar', 11: 'Sikkim', 12: 'Arunachal Pradesh', 13: 'Nagaland', 14: 'Manipur',
@@ -719,7 +737,7 @@ function hasChanges() {
 const defaultChanges = () => new Set(['added', 'updated', 'removed']);
 let prevCol = null, diffMode = false;
 const previewing = () => !!(prevF.st || prevF.pc || prevF.ty || hoverYear != null || prevCol);
-function filterItems(skipCol) {
+function filterItems(skipCol, skipTrans) {
   const f = eff(), year = effYear(), colMap = { ...st.colFilters };
   if (prevCol) {
     for (const [, , , , c] of CLOUD_MODES) delete colMap[c];
@@ -731,7 +749,7 @@ function filterItems(skipCol) {
   return st.items.filter(it => {
     if (!diffMode && it.type === 'removed') return false;
     if (byChange && !st.filter.has(it.type)) return false;
-    if (st.transition && it.transition !== st.transition) return false;
+    if (!skipTrans && st.transition && it.transition !== st.transition) return false;
     if (f.st && classify(it.row[STATUS_FIELD])?.cat.id !== f.st) return false;
     if (f.pc && pcCode(it.row['Project Category (Code)']) !== f.pc) return false;
     if (f.ty && typeOf(it.row) !== f.ty) return false;
@@ -765,19 +783,24 @@ function applyFilters() {
 }
 
 function renderNav() {
-  $('nav').hidden = false;
   $('version').innerHTML = st.commits.map((c, i) =>
-    `<option value="${i}"${i === st.idx ? ' selected' : ''}>${fmtDate(c.date)} · ${esc(c.msg)} · ${c.sha.slice(0, 7)}${i === 0 ? ' (latest)' : ''}</option>`).join('');
+    `<option value="${i}"${i === st.idx ? ' selected' : ''}>${fmtDate(c.date)} · ${esc(c.msg)}${i === 0 ? ' (latest)' : ''}</option>`).join('');
   $('older').disabled = st.idx >= st.commits.length - 1;
   $('newer').disabled = st.idx <= 0;
 }
 function setDiffMode(on) {
+  const before = skipDelisted();
   diffMode = on;
+  if (on) diffIgnoreDel = false;
   $('verpanel').hidden = !on;
   $('verbtn').setAttribute('aria-expanded', on);
   $('viewer').classList.toggle('diffmode', on);
   if (!st.cur) return;
-  if (!on && st.idx !== 0) { st.idx = 0; showVersion(); return; }
+  if (before !== skipDelisted() || (!on && st.idx !== 0)) {
+    if (!on) st.idx = 0;
+    showVersion();
+    return;
+  }
   st.filter = defaultChanges();
   st.transition = null;
   st.page = 0;
@@ -789,19 +812,21 @@ $('verbtn').addEventListener('click', () => setDiffMode(!diffMode));
 function renderSummary() {
   const c = counts(), d = st.diff;
   const chip = (key, label, n) => `<button class="chip ${key}${st.filter.has(key) ? ' on' : ''}" data-filter="${key}" aria-pressed="${st.filter.has(key)}">${label} ${n}</button>`;
-  $('chips').innerHTML = d.hasPrev
-    ? '<span class="chiplabel">Show rows:</span>' + chip('same', 'No Changes', c.same) + chip('added', '+ Added', c.added) + chip('updated', '~ Updated', c.updated) + chip('removed', '− Removed', c.removed)
-    : '';
+  $('chips').innerHTML = (d.hasPrev
+    ? chip('added', '+ Added', c.added) + chip('updated', '~ Updated', c.updated) + chip('removed', '− Removed', c.removed) + chip('same', 'No Changes', c.same)
+    : '') + `<label class="inline" title="Delisted applications were removed from the portal by the system, usually because they were left incomplete."><input type="checkbox" id="diffignoredel"${diffIgnoreDel ? ' checked' : ''}> Ignore delisted</label>`;
+  renderTrans();
+}
+
+function renderTrans() {
   const tally = {};
-  st.items.forEach(i => { if (i.transition) tally[i.transition] = (tally[i.transition] || 0) + 1; });
-  $('trans').innerHTML = Object.entries(tally).sort((a, b) => b[1] - a[1]).slice(0, 10)
-    .map(([t, n]) => `<button class="chip trans${st.transition === t ? ' on' : ''}" data-trans="${esc(t)}">${esc(t)} · ${n}</button>`).join('');
-  const commit = st.commits[st.idx], parent = st.commits[st.idx + 1];
-  let meta = `${STATES[st.code]} · ${st.cur.rows.size} projects · <a href="https://github.com/${REPO}/commit/${commit.sha}" target="_blank" rel="noopener">${commit.sha.slice(0, 7)}</a> on ${fmtDate(commit.date)}`;
-  meta += parent ? ` · compared with ${fmtDate(parent.date)}` : ' · oldest version, nothing to compare';
-  if (d.newFields.length) meta += ` · new columns: ${esc(d.newFields.join(', '))}`;
-  if (d.goneFields.length) meta += ` · dropped columns: ${esc(d.goneFields.join(', '))}`;
-  $('meta').innerHTML = meta;
+  filterItems(null, true).forEach(i => { if (i.transition) tally[i.transition] = (tally[i.transition] || 0) + 1; });
+  if (st.transition && !(st.transition in tally)) tally[st.transition] = 0;
+  const rows = Object.entries(tally).sort((a, b) => b[1] - a[1]);
+  $('trans').hidden = !st.filter.has('updated') || !rows.length;
+  $('trans').innerHTML = rows.length ? `<div class="transwrap"><table class="transtbl"><thead><tr><th colspan="4">${esc(STATUS_FIELD)}</th></tr></thead><tbody>`
+    + rows.map(([t, n]) => { const [a, b] = t.split(' → '); return `<tr class="${st.transition === t ? 'on' : ''}" data-trans="${esc(t)}"><td>${esc(a)}</td><td class="arrow">→</td><td>${esc(b)}</td><td class="n">(${n})</td></tr>`; }).join('')
+    + '</tbody></table></div>' : '';
 }
 
 const URL_RX = /https?:\/\/[^\s"'<>[\](){}|\\^`,]+/g;
@@ -900,6 +925,7 @@ function progFilterHtml() {
 
 function renderTable(opts = {}) {
   applyFilters();
+  if (st.diff) renderTrans();
   $('viewer').classList.toggle('previewing', previewing());
   renderFilterBar();
   const pages = Math.max(1, Math.ceil(st.shown.length / PAGE_SIZE));
@@ -937,7 +963,11 @@ function renderTable(opts = {}) {
 }
 
 function renderColPicker() {
-  $('colpick').innerHTML = st.cur.fields.map(f => `<label><input type="checkbox" value="${esc(f)}"${st.cols.includes(f) ? ' checked' : ''}> ${esc(f)}</label>`).join('');
+  $('colpick').innerHTML = '<div class="colbtns"><button type="button" id="colall"></button></div>' + st.cur.fields.map(f => `<label><input type="checkbox" value="${esc(f)}"${st.cols.includes(f) ? ' checked' : ''}> ${esc(f)}</label>`).join('');
+  syncColAll();
+}
+function syncColAll() {
+  $('colall').textContent = st.cur.fields.every(f => st.cols.includes(f)) ? 'Deselect All' : 'Select All';
 }
 
 function setStatus(text, err) {
@@ -1010,6 +1040,7 @@ async function showVersion() {
     st.expanded.clear();
     st.cols = DEFAULT_COLS.filter(f => fc.fields.includes(f));
     if (!st.cols.length) st.cols = fc.fields.slice(0, 8);
+    $('rawcsv').textContent = `All ${STATES[st.code]} ↗`;
     $('rawcsv').href = `https://github.com/${REPO}/blob/${commit.sha}/${csvPath(st.code)}`;
     $('controls').hidden = false;
     const restore = pendingHash;
@@ -1038,12 +1069,12 @@ async function selectState(code, sha) {
   $('viewer').hidden = !code;
   $('hexplore').hidden = true;
   renderDash(code);
-  ['nav', 'controls'].forEach(id => $(id).hidden = true);
+  $('controls').hidden = true;
   diffMode = false;
   $('verpanel').hidden = true;
   $('viewer').classList.remove('diffmode');
   $('verbtn').setAttribute('aria-expanded', false);
-  ['chips', 'trans', 'meta'].forEach(id => $(id).innerHTML = '');
+  ['chips', 'trans'].forEach(id => $(id).innerHTML = '');
   if (!code) { history.replaceState(null, '', location.pathname + location.search); return; }
   setStatus('Loading history…');
   try {
@@ -1929,13 +1960,16 @@ $('exlist').addEventListener('click', e => {
 });
 $('colpick').addEventListener('change', () => {
   st.cols = [...$('colpick').querySelectorAll('input:checked')].map(i => i.value);
+  syncColAll();
   renderTable();
 });
-$('allcols').addEventListener('click', () => {
-  st.cols = [...st.cur.fields];
+$('colpick').addEventListener('click', e => {
+  if (!e.target.closest('#colall')) return;
+  st.cols = st.cur.fields.every(f => st.cols.includes(f)) ? [] : [...st.cur.fields];
   renderColPicker();
   renderTable();
 });
+$('rawcsv').addEventListener('click', () => { $('dl').open = false; });
 $('dlcsv').addEventListener('click', () => {
   const csv = Papa.unparse({ fields: st.cols, data: st.shown.map(it => st.cols.map(f => it.row[f] ?? '')) });
   const a = document.createElement('a');
@@ -1943,12 +1977,19 @@ $('dlcsv').addEventListener('click', () => {
   a.download = `Projects_${st.code}_${fmtDate(st.commits[st.idx].date)}.csv`;
   a.click();
   URL.revokeObjectURL(a.href);
+  $('dl').open = false;
+});
+$('chips').addEventListener('change', e => {
+  if (e.target.id !== 'diffignoredel') return;
+  diffIgnoreDel = e.target.checked;
+  showVersion();
 });
 $('chips').addEventListener('click', e => {
   const b = e.target.closest('[data-filter]');
   if (!b) return;
   const k = b.dataset.filter;
   st.filter.has(k) ? st.filter.delete(k) : st.filter.add(k);
+  if (!st.filter.has('updated')) st.transition = null;
   st.page = 0;
   renderSummary();
   renderTable();

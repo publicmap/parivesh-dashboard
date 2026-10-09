@@ -10,6 +10,10 @@ on:
         description: "Comma-separated LGD state codes (blank = all)"
         required: false
         default: ""
+      commit_message:
+        description: "Commit message for the updated CSVs (blank = 'Update CSVs <date>')"
+        required: false
+        default: ""
 
 jobs:
   matrix:
@@ -86,9 +90,11 @@ jobs:
           merge-multiple: true
       - name: Build dashboard CSV
         run: python3 6_dashboard.py --status-dir status --run-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-      - run: |
+      - env:
+          COMMIT_MESSAGE: ${{ github.event.inputs.commit_message }}
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add csv
-          git diff --cached --quiet || git commit -m "Update CSVs $(date +%F)"
+          git diff --cached --quiet || git commit -m "${COMMIT_MESSAGE:-Update CSVs $(date +%F)}"
           git push
