@@ -30,8 +30,24 @@ jobs:
             echo 'states=["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","27","28","29","30","31","32","33","34","35","36","37","38"]' >> "$GITHUB_OUTPUT"
           fi
 
+  proxy:
+    runs-on: ubuntu-latest
+    outputs:
+      ip_address: ${{ steps.start.outputs.ip_address }}
+      instance_name: ${{ steps.start.outputs.instance_name }}
+      fw_rule_name: ${{ steps.start.outputs.fw_rule_name }}
+    steps:
+      - id: start
+        uses: ramSeraph/gcp-simple-proxy-action/start@v0.0.2
+        with:
+          gcp-credentials: ${{ secrets.GCP_AUTH }}
+          gcp-project: ${{ secrets.GCP_PROJECT }}
+          gcp-zone: asia-south1-a
+          simpleproxy-basicauth: ${{ secrets.PROXY_AUTH }}
+          simpleproxy-port: 8080
+
   fetch:
-    needs: matrix
+    needs: [matrix, proxy]
     runs-on: ubuntu-latest
     timeout-minutes: 350
     strategy:
@@ -52,6 +68,8 @@ jobs:
           key: raw-${{ matrix.state }}-${{ github.run_id }}
           restore-keys: raw-${{ matrix.state }}-
       - run: CSV_ONLY=1 bash run.sh ${{ matrix.state }}
+        env:
+          HTTPS_PROXY: http://${{ secrets.PROXY_AUTH }}@${{ needs.proxy.outputs.ip_address }}:8080
       - uses: actions/upload-artifact@v4
         with:
           name: csv-${{ matrix.state }}
@@ -67,6 +85,19 @@ jobs:
         with:
           name: status-${{ matrix.state }}
           path: status/${{ matrix.state }}.txt
+
+  stop-proxy:
+    needs: [proxy, fetch]
+    if: ${{ always() && needs.proxy.outputs.instance_name != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ramSeraph/gcp-simple-proxy-action/stop@v0.0.2
+        with:
+          gcp-credentials: ${{ secrets.GCP_AUTH }}
+          gcp-project: ${{ secrets.GCP_PROJECT }}
+          gcp-zone: asia-south1-a
+          gcp-instance-name: ${{ needs.proxy.outputs.instance_name }}
+          gcp-fw-rule-name: ${{ needs.proxy.outputs.fw_rule_name }}
 
   commit:
     needs: fetch

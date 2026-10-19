@@ -245,7 +245,7 @@ class ParallelDownloader:
         ssl_context.verify_mode = ssl.CERT_NONE
         connector = aiohttp.TCPConnector(limit=50, limit_per_host=20, ssl=ssl_context)
         
-        async with aiohttp.ClientSession(timeout=timeout, connector=connector) as session:
+        async with aiohttp.ClientSession(timeout=timeout, connector=connector, trust_env=True) as session:
             # Process in random batches
             remaining = urls_and_paths.copy()
             batch_num = 0

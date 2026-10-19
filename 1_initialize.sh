@@ -19,13 +19,12 @@ do
   API_URL="https://parivesh.nic.in/parivesh_api/trackYourProposal/advanceSearchData?majorClearanceType=${clearance}&state=${STATE}&sector=&proposalStatus=&proposalType=&issuingAuthority=&activityId=&category=&startDate=&endDate=&areaMin=&areaMax=&text="
   
   echo "Fetching clearance type $clearance for state '$STATE'..."
-  curl "$API_URL" > "$OUTPUT_FILE"
-  
-  # Check if the file was created and has content
-  if [ -s "$OUTPUT_FILE" ]; then
+  if curl -fsS --retry 3 --retry-delay 5 --retry-all-errors "$API_URL" > "$OUTPUT_FILE" && [ -s "$OUTPUT_FILE" ]; then
     echo "Successfully fetched data for clearance type $clearance"
   else
-    echo "Warning: No data or empty response for clearance type $clearance"
+    echo "Error: failed to fetch clearance type $clearance" >&2
+    rm -f "$OUTPUT_FILE"
+    exit 1
   fi
   
 done
