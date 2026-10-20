@@ -37,14 +37,13 @@ jobs:
       instance_name: ${{ steps.start.outputs.instance_name }}
       fw_rule_name: ${{ steps.start.outputs.fw_rule_name }}
     steps:
+      - uses: actions/checkout@v4
       - id: start
-        uses: ramSeraph/gcp-simple-proxy-action/start@v0.0.2
-        with:
-          gcp-credentials: ${{ secrets.GCP_AUTH }}
-          gcp-project: ${{ secrets.GCP_PROJECT }}
-          gcp-zone: asia-south1-a
-          simpleproxy-basicauth: ${{ secrets.PROXY_AUTH }}
-          simpleproxy-port: 8080
+        env:
+          GCP_AUTH: ${{ secrets.GCP_AUTH }}
+          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+          PROXY_AUTH: ${{ secrets.PROXY_AUTH }}
+        run: bash scripts/proxy.sh start
 
   fetch:
     needs: [matrix, proxy]
@@ -91,13 +90,13 @@ jobs:
     if: ${{ always() && needs.proxy.outputs.instance_name != '' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: ramSeraph/gcp-simple-proxy-action/stop@v0.0.2
-        with:
-          gcp-credentials: ${{ secrets.GCP_AUTH }}
-          gcp-project: ${{ secrets.GCP_PROJECT }}
-          gcp-zone: asia-south1-a
-          gcp-instance-name: ${{ needs.proxy.outputs.instance_name }}
-          gcp-fw-rule-name: ${{ needs.proxy.outputs.fw_rule_name }}
+      - uses: actions/checkout@v4
+      - env:
+          GCP_AUTH: ${{ secrets.GCP_AUTH }}
+          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+          INSTANCE_NAME: ${{ needs.proxy.outputs.instance_name }}
+          FW_RULE_NAME: ${{ needs.proxy.outputs.fw_rule_name }}
+        run: bash scripts/proxy.sh stop
 
   commit:
     needs: fetch
