@@ -20,8 +20,9 @@ do
   
   echo "Fetching clearance type $clearance for state '$STATE'..."
   ok=0
-  for attempt in 1 2 3 4 5 6; do
-    if curl -fsS --max-time 300 "$API_URL" > "$OUTPUT_FILE" && [ -s "$OUTPUT_FILE" ]; then
+  for attempt in 1 2 3 4 5; do
+    if curl -fsS --max-time 900 "$API_URL" > "$OUTPUT_FILE.tmp" && [ -s "$OUTPUT_FILE.tmp" ]; then
+      mv "$OUTPUT_FILE.tmp" "$OUTPUT_FILE"
       ok=1
       break
     fi
@@ -29,12 +30,14 @@ do
     echo "Attempt $attempt failed for clearance type $clearance; retrying in ${wait}s..." >&2
     sleep "$wait"
   done
+  rm -f "$OUTPUT_FILE.tmp"
 
   if [ "$ok" = 1 ]; then
     echo "Successfully fetched data for clearance type $clearance"
+  elif [ -s "$OUTPUT_FILE" ]; then
+    echo "::warning::Parivesh search failed for state '$STATE' clearance type $clearance; using the previous list"
   else
     echo "Error: failed to fetch clearance type $clearance" >&2
-    rm -f "$OUTPUT_FILE"
     exit 1
   fi
 
